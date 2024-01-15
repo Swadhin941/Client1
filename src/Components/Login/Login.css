@@ -1,0 +1,47 @@
+@media screen and (max-width: 576px) {
+    .loginImgSection {
+        display: none;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 766px) {
+    .loginImgSection {
+        display: none;
+    }
+}
+
+@media (min-width: 767px) and (max-width: 991px) {
+    .loginImgSection {
+        height: 100vh;
+        width: 75%;
+    }
+
+    .loginImgSection img {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+    .loginImgSection {
+        height: 100vh;
+        width: 75%;
+    }
+
+    .loginImgSection img {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 1201px) {
+    .loginImgSection {
+        height: 100vh;
+        width: 80%;
+    }
+
+    .loginImgSection img {
+        height: 100%;
+        width: 100%;
+    }
+}
