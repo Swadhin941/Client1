@@ -1,17 +1,93 @@
 @media screen and (max-width: 576px){
-
+    .imgCard {
+            height: 200px;
+            width: auto;
+        }
+    
+        .imgCardPremium {
+            height: 200px;
+            width: auto;
+            filter: blur(5px);
+        }
+    
+        .imgCardPremium img {
+            height: 100%;
+            width: 100%;
+        }
+    
+        .imgCard img {
+            height: 100%;
+            width: 100%;
+        }
 }
 
 @media (min-width: 577px) and (max-width: 766px) {
+    .imgCard {
+            height: 200px;
+            width: auto;
+        }
     
+        .imgCardPremium {
+            height: 200px;
+            width: auto;
+            filter: blur(5px);
+        }
+    
+        .imgCardPremium img {
+            height: 100%;
+            width: 100%;
+        }
+    
+        .imgCard img {
+            height: 100%;
+            width: 100%;
+        }
 }
 
 @media (min-width: 767px) and (max-width: 991px) {
+    .imgCard {
+            height: 200px;
+            width: auto;
+        }
     
+        .imgCardPremium {
+            height: 200px;
+            width: auto;
+            filter: blur(5px);
+        }
+    
+        .imgCardPremium img {
+            height: 100%;
+            width: 100%;
+        }
+    
+        .imgCard img {
+            height: 100%;
+            width: 100%;
+        }
 }
 
 @media (min-width: 992px) and (max-width: 1200px) {
+    .imgCard {
+            height: 200px;
+            width: auto;
+        }
     
+        .imgCardPremium {
+            height: 200px;
+            width: auto;
+            filter: blur(5px);
+        }
+    
+        .imgCardPremium img {
+            height: 100%;
+            width: 100%;
+        }
+    
+        .imgCard img {
+            height: 100%;
+            width: 100%;
+        }
 }
 
 @media screen and (min-width: 1201px) {
@@ -32,7 +108,5 @@
         height: 100%;
         width: 100%;
     }
-    .imgCardPremium{
-
-    }
+    
 }

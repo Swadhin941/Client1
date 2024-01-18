@@ -42,7 +42,7 @@ const Login = () => {
                             toast.success(`Welcome`);
                             setLoading(false);
                             setLoginLoading(false);
-                            navigate(from, { replace: true });
+                            navigate('/', { replace: true });
                         })
                 }
                 else{

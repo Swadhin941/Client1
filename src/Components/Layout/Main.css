@@ -7,3 +7,9 @@
 .nav-link:hover{
     color: rgb(212, 212, 212)
 }
+@media screen and (min-width: 1201px) {
+    .marginAuto{
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+}

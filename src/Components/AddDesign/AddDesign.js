@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Tags from "./Tags";
+import { SharedData } from '../SharedData/SharedContext';
+import useAxiosSecure from '../CustomHook/useAxiosSecure/useAxiosSecure';
+import toast from 'react-hot-toast';
+import ClockLoader from 'react-spinners/ClockLoader';
 
 const AddDesign = () => {
-    const [title, setTitle]= useState(null);
-    const [description, setDescription]= useState(null);
-    const [tags, setTags]= useState([]);
-    const [assets, setAssets]= useState(null);
-    const [image, setImage]= useState(null);
-    const [checked, setChecked]= useState(true);
+    const { user } = useContext(SharedData);
+    const [title, setTitle] = useState(null);
+    const [description, setDescription] = useState(null);
+    const [tags, setTags] = useState([]);
+    const [assets, setAssets] = useState(null);
+    const [image, setImage] = useState(null);
+    const [checked, setChecked] = useState(true);
+    const [dataLoading, setDataLoading] = useState(false);
+    const [axiosSecure] = useAxiosSecure();
 
     const handleChangeTitle = (e) => {
         setTitle(e.target.value);
@@ -33,13 +40,75 @@ const AddDesign = () => {
         setChecked(!checked);
     };
 
-    const handleSubmit = ()=>{
+    const handleSubmit = () => {
 
+        if(tags.length===0){
+            toast.error("Please enter some tags");
+            return;
+        }
+        if(!assets){
+            toast.error("Please upload the assets");
+            return
+        }
+        if(!image){
+            toast.error("Please upload a image");
+            return;
+        }
+        if(!description){
+            toast.error("Please give a short description");
+            return;
+        }
+        if(!title){
+            toast.error("Please enter the title");
+            return;
+        }
+        setDataLoading(true)
+        const imgFormData = new FormData();
+        imgFormData.append('image', image);
+        const assetsFormData = new FormData();
+        assetsFormData.append('file', assets);
+        assetsFormData.append('upload_preset', process.env.REACT_APP_upload_preset);
+        assetsFormData.append('cloud_name', process.env.REACT_APP_cloud_name);
+        fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_imgBB}`, {
+            method: "POST",
+            body: imgFormData
+        })
+            .then(res => res.json())
+            .then(imgData => {
+                if (imgData.success) {
+                    fetch(`https://api.cloudinary.com/v1_1/${process.env.REACT_APP_cloud_name}/image/upload`, {
+                        method: "POST",
+                        body: assetsFormData
+                    })
+                        .then(res => res.json())
+                        .then(assetData => {
+                            if (assetData.url) {
+                                axiosSecure.post(`/addDesign?user=${user?.email}`, { assets, title, description, uploaderEmail: user?.email, uploaderName: user?.username, isApproved: false, image: imgData.data.url, assets: assetData.url, likes: [], isPremium: checked, isSold: false, isRejected: false, tags: [...tags] })
+                                .then(res => res.data)
+                                .then(data => {
+                                        if (data.acknowledged) {
+                                            toast.success("Design posted")
+                                            setDataLoading(false)
+                                        }
+                                    })
+                                    .catch(error => {
+                                        toast.error(error.message);
+                                        setDataLoading(false);
+                                    })
+                            }
+                        })
+                        .catch(error => {
+                            toast.error(error.message);
+                            setDataLoading(false);
+                        })
+                }
+            })
+            .catch(error => {
+                toast.error(error.message);
+                setDataLoading(false);
+            })
     }
 
-    useEffect(()=>{
-        console.log(checked);
-    },[checked]);
 
     return (
         <div
@@ -77,7 +146,7 @@ const AddDesign = () => {
                             ></textarea>
                         </div>
                         <div className="form-group mt-1">
-                        
+
                             <Tags handleTags={handleTags} />
                         </div>
                         <div className="row mt-1">
@@ -116,7 +185,7 @@ const AddDesign = () => {
                                 Premium
                             </label>
                         </div>
-                        <button className='btn btn-dark w-100 mt-3'>Upload</button>
+                        <button className='btn btn-dark w-100 mt-3 d-flex justify-content-center' onClick={() => handleSubmit()}>{dataLoading? <ClockLoader size={24} color='white' />: "Upload"}</button>
                     </div>
                 </div>
             </div>
