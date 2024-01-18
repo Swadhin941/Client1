@@ -11,7 +11,7 @@ const PrivateRouter = ({children}) => {
         return <Spinner></Spinner>
     };
     
-    if(user&& user?.email){
+    if(user !== false && user?.email){
         return children;
     }
 

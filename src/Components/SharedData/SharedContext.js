@@ -27,7 +27,8 @@ const SharedContext = ({ children }) => {
         setLoading(true);
         const subscriber = async () => {
             setLoading(true);
-            const response = await fetch(`${process.env.REACT_APP_SERVER}/authSubscriberCheck`, {
+            try{
+                const response = await fetch(`${process.env.REACT_APP_SERVER}/authSubscriberCheck`, {
                 method: "POST",
                 headers: {
                     "content-type": "application/json",
@@ -36,13 +37,18 @@ const SharedContext = ({ children }) => {
                 body: JSON.stringify({})
             });
             const data = await response.json();
-            if (data.user) {
-                setUser(data.user);
+                if (data.user) {
+                    setUser(data.user);
+                }
+                else {
+                    setUser(null);
+                }
             }
-            else {
+            catch(error){
                 setUser(null);
             }
-            console.log(data);
+            
+            // console.log(data, Date.now());
             setLoading(false);
         }
         return () => subscriber();
