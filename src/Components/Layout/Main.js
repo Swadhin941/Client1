@@ -6,13 +6,6 @@ import ProfileModal from '../Modals/ProfileModal/ProfileModal';
 
 const Main = () => {
     const { user, logout, loading } = useContext(SharedData);
-    const navigate= useNavigate()
-    useEffect(()=>{
-        if(!loading && !user){
-            navigate('/login');
-        }
-    },[user, loading])
-
 
     return (
         <div className='container-fluid ps-0 pe-0 d-flex' style={{ backgroundColor: "#e5eafc", height: "100vh" }}>
