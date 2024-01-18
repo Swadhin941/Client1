@@ -47,8 +47,6 @@ const SharedContext = ({ children }) => {
             catch(error){
                 setUser(null);
             }
-            
-            // console.log(data, Date.now());
             setLoading(false);
         }
         return () => subscriber();

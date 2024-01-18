@@ -1,11 +1,19 @@
-import React, { useContext } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import "./Main.css";
 import { SharedData } from '../SharedData/SharedContext';
 import ProfileModal from '../Modals/ProfileModal/ProfileModal';
 
 const Main = () => {
-    const { user, logout } = useContext(SharedData);
+    const { user, logout, loading } = useContext(SharedData);
+    const navigate= useNavigate()
+    useEffect(()=>{
+        if(!loading && !user){
+            navigate('/login');
+        }
+    },[user, loading])
+
+
     return (
         <div className='container-fluid ps-0 pe-0 d-flex' style={{ backgroundColor: "#e5eafc", height: "100vh" }}>
             <div>
