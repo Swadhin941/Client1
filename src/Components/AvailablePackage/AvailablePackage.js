@@ -3,26 +3,34 @@ import { SharedData } from '../SharedData/SharedContext';
 import useAxiosSecure from '../CustomHook/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
 import PackageModal from '../Modals/PackageModal/PackageModal';
+import Spinner from '../Spinner/Spinner';
 
 const AvailablePackage = () => {
     const { user } = useContext(SharedData);
     const [availablePackage, setAvailablePackage] = useState([]);
     const [reload, setReload] = useState(false);
     const [axiosSecure] = useAxiosSecure();
+    const [dataLoading, setDataLoading]= useState(false);
 
     useEffect(() => {
         if (user !== false) {
+            setDataLoading(true);
             axiosSecure.get('/allPackage')
                 .then(res => res.data)
                 .then(data => {
-                    console.log(data);
                     setAvailablePackage(data);
+                    setDataLoading(false);
                 })
                 .catch(error => {
                     toast.error(error.message);
+                    setDataLoading(false);
                 })
         }
     }, [user, reload])
+
+    if(dataLoading){
+        return <Spinner></Spinner>
+    }
 
     return (
         <div className='container-fluid'>
