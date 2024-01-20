@@ -19,59 +19,72 @@ import AvailablePackage from './Components/AvailablePackage/AvailablePackage';
 import AdminRouter from './Components/PrivateRouter/AdminRouter';
 import DesignerRouter from './Components/PrivateRouter/DesignerRouter';
 import Carts from './Components/Carts/Carts';
+import Root from './Components/Layout/Root';
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Main></Main>,
-      children:[        
+      element: <Root></Root>,
+      children:[ 
         {
           path: "/",
+          element: <Login></Login>
+        },
+        {
+          path: "/login",
+          element: <Login></Login>
+        }       
+        
+      ]
+    },
+    {
+      path: "/Dashboard",
+      element: <PrivateRouter><Main></Main></PrivateRouter>,
+      children: [
+        {
+          path: "/Dashboard",
           element: <PrivateRouter><Dashboard></Dashboard></PrivateRouter>
         },
         {
-          path: "/addDesign",
+          path: "/Dashboard/addDesign",
           element: <DesignerRouter><AddDesign></AddDesign></DesignerRouter>
         },
         {
-          path: "/myDesigns",
+          path: "/Dashboard/myDesigns",
           element: <DesignerRouter><MyDesigns></MyDesigns></DesignerRouter>
         },
         {
-          path: "/addUser",
+          path: "/Dashboard/addUser",
           element: <AdminRouter><AddUser></AddUser></AdminRouter>
         },
         {
-          path: "/ApproveRequest",
+          path: "/Dashboard/ApproveRequest",
           element: <AdminRouter><ApproveRequest></ApproveRequest></AdminRouter>,
         },
         {
-          path: "/review-designs",
+          path: "/Dashboard/review-designs",
           element: <AdminRouter><ReviewDesigns></ReviewDesigns></AdminRouter>
         },
         {
-          path: "/specific-design",
+          path: "/Dashboard/specific-design",
           element: <PrivateRouter><DesignDetails></DesignDetails></PrivateRouter>
         },
         {
-          path: "/managePayment",
+          path: "/Dashboard/managePayment",
           element: <AdminRouter><ManagePayment></ManagePayment></AdminRouter>
         },
         {
-          path: "/availablePackage",
+          path: "/Dashboard/availablePackage",
           element: <PrivateRouter><AvailablePackage></AvailablePackage></PrivateRouter>
         },
         {
-          path: "/carts",
+          path: "/Dashboard/carts",
           element: <PrivateRouter><Carts></Carts></PrivateRouter>
         }
       ]
     },
-    {
-      path: "/login",
-      element: <Login></Login>
-    },
+  
     {
       path: "*",
       element: <PageNotFound></PageNotFound>

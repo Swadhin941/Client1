@@ -42,7 +42,7 @@ const Login = () => {
                             toast.success(`Welcome`);
                             setLoading(false);
                             setLoginLoading(false);
-                            navigate('/', { replace: true });
+                            navigate('/Dashboard', { replace: true });
                         })
                 }
                 else{
@@ -55,6 +55,11 @@ const Login = () => {
                 setLoginLoading(false);
             })
     }
+    useEffect(()=>{
+        if(user){
+            navigate("/Dashboard", {replace: true});
+        }
+    },[user])
 
     return (
         <div className='container-fluid ps-0 pe-0'>

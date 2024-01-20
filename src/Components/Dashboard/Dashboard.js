@@ -217,6 +217,13 @@ const Dashboard = () => {
         })
     },[])
 
+
+    const handleNavigate=(item)=>{
+        if(user?.role==="store" && item?.isPremium){
+            navigate(`/Dashboard/specific-design?id=${item._id}`)
+        }
+    }
+
     return (
         <div className='container-fluid'>
             <div className='d-flex justify-content-between mt-2 mb-2'>
@@ -327,10 +334,10 @@ const Dashboard = () => {
                                     </div>
                                 }
 
-                                <div className={item.isPremium ? "imgCardPremium" : 'imgCard'}>
+                                <div className={item.isPremium ? "imgCardPremium" : 'imgCard'} onClick={()=>handleNavigate(item)}>
                                     <img src={item.image} alt="" />
                                 </div>
-                                <div className="card-body" style={{borderBottom:"0px"}}>
+                                <div className="card-body" style={{borderBottom:"0px"}} onClick={()=>handleNavigate(item)}>
                                     <div className="d-flex justify-content-between">
                                         <h5 className='fw-bold'>{item?.title}</h5>
                                         <div>
@@ -350,7 +357,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="card-footer" style={{borderTop:"0px"}}>
                                     {
-                                        user?.role === "admin" ? <button className='btn btn-warning w-100' onClick={() => navigate(`/specific-design?id=${item._id}`)}>View Details</button> : item?.isPremium ? <button className='btn btn-warning w-100' onClick={() => navigate('/availablePackage')}>Pay {item?.price}</button> : <button className='btn btn-warning w-100' onClick={() => navigate(`/specific-design?id=${item._id}`)}>View Details</button>
+                                        user?.role === "admin" ? <button className='btn btn-warning w-100' onClick={() => navigate(`/Dashboard/specific-design?id=${item._id}`)}>View Details</button> : item?.isPremium ? <button className='btn btn-warning w-100' onClick={() => navigate('/Dashboard/availablePackage')}>Pay {item?.price}</button> : <button className='btn btn-warning w-100' onClick={() => navigate(`/Dashboard/specific-design?id=${item._id}`)}>View Details</button>
                                     }
                                 </div>
                             </div>

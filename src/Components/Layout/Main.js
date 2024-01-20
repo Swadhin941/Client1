@@ -14,20 +14,20 @@ const Main = () => {
                     <div>
                         {
                             user && <div>
-                                <NavLink to={'/'} title='Dashboard' style={{textDecoration:"none", color:"white"}}><i className='bi bi-brush fs-5'></i></NavLink>
+                                <NavLink to={'/Dashboard'} title='Dashboard' style={{textDecoration:"none", color:"white"}}><i className='bi bi-brush fs-5'></i></NavLink>
                             </div>
                         }
                         
                         {
                             user?.role === "admin" && <>
                                 <div className='my-3'>
-                                    <NavLink to={'/addUser'} title='Add user' className={'side-link'}><i className='bi bi-person-plus-fill fs-5'></i></NavLink>
+                                    <NavLink to={'/Dashboard/addUser'} title='Add user' className={'side-link'}><i className='bi bi-person-plus-fill fs-5'></i></NavLink>
                                 </div>
                                 <div className="">
-                                    <NavLink to={'/ApproveRequest'} title='Approve Design' className={'side-link'}><i className='bi bi-tags-fill fs-5'></i></NavLink>
+                                    <NavLink to={'/Dashboard/ApproveRequest'} title='Approve Design' className={'side-link'}><i className='bi bi-tags-fill fs-5'></i></NavLink>
                                 </div>
                                 <div className="mt-3">
-                                    <NavLink to={'/managePayment'} title='Manage Payment' className={'side-link'}><i className='bi bi-cash-stack fs-5'></i></NavLink>
+                                    <NavLink to={'/Dashboard/managePayment'} title='Manage Payment' className={'side-link'}><i className='bi bi-cash-stack fs-5'></i></NavLink>
                                 </div>
 
                             </>
@@ -35,23 +35,23 @@ const Main = () => {
                         {
                             user?.role === "designer" && <>
                                 <div className="mt-3">
-                                    <NavLink to={'/myDesigns'} title='My Design' className={'side-link'}><i className='bi bi-x-diamond-fill fs-5'></i></NavLink>
+                                    <NavLink to={'/Dashboard/myDesigns'} title='My Design' className={'side-link'}><i className='bi bi-x-diamond-fill fs-5'></i></NavLink>
                                 </div>
                                 <div className="mt-3">
-                                    <NavLink to={'/addDesign'} title='Add Design' className={'side-link'}><i className='bi bi-box-arrow-in-down-left fs-5'></i></NavLink>
+                                    <NavLink to={'/Dashboard/addDesign'} title='Add Design' className={'side-link'}><i className='bi bi-box-arrow-in-down-left fs-5'></i></NavLink>
                                 </div>
                             </>
                         }
                         {
                             user?.role === 'store' && <>
                                 <div className="mt-3">
-                                    <NavLink to={'/carts'} title='My Carts' className={'side-link'}><i className='bi bi-cart-fill fs-5'></i></NavLink>
+                                    <NavLink to={'/Dashboard/carts'} title='My Carts' className={'side-link'}><i className='bi bi-cart-fill fs-5'></i></NavLink>
                                 </div>
                             </>
                         }
                         {
                            ( user?.role === "admin" || user?.role === "store") && <div className="mt-3">
-                                <NavLink to={'/availablePackage'} title='Packages' className={'side-link'}><i className='bi bi-boxes fs-5'></i></NavLink>
+                                <NavLink to={'/Dashboard/availablePackage'} title='Packages' className={'side-link'}><i className='bi bi-boxes fs-5'></i></NavLink>
                             </div>
                         }
 
