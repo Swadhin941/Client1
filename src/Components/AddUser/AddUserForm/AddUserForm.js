@@ -102,11 +102,12 @@ const AddUserForm = () => {
                                 </div>
                                 <div className='mt-2 d-flex justify-content-evenly'>
                                     <div>
-                                        <label htmlFor="phoneNumber" className='form-label'>Phone:</label>
+                                        <label htmlFor="state" className='form-label'>State:</label>
                                         <div>
-                                            <input type="text" className='form-control' name='phoneNumber' placeholder='Enter your phone number' required />
+                                            <input type="text" className='form-control' name='state' placeholder='Enter your phone number' required />
                                         </div>
                                     </div>
+                                    
                                     <div>
                                         <label htmlFor="city">City:</label>
                                         <div>
@@ -116,9 +117,9 @@ const AddUserForm = () => {
                                 </div>
                                 <div className='mt-2 d-flex justify-content-evenly'>
                                     <div>
-                                        <label htmlFor="state" className='form-label'>State:</label>
+                                        <label htmlFor="phoneNumber" className='form-label'>Phone:</label>
                                         <div>
-                                            <input type="text" className='form-control' name='state' placeholder='Enter your phone number' required />
+                                            <input type="text" className='form-control' name='phoneNumber' placeholder='Enter your phone number' required />
                                         </div>
                                     </div>
                                     <div>
@@ -156,7 +157,7 @@ const AddUserForm = () => {
                                     </div>
                                 </div>
                                 <div className='mt-3 d-flex justify-content-end'>
-                                    <button type='submit' className='btn btn-primary w-25 d-flex justify-content-center' disabled={dataLoading ? true : false}>{dataLoading ? <ClockLoader size={24} color='white' /> : "Upload"}</button>
+                                    <button type='submit' className='btn btn-primary w-25 d-flex justify-content-center' disabled={dataLoading ? true : false}>{dataLoading ? <ClockLoader size={24} color='white' /> : "Submit"}</button>
                                 </div>
                             </form>
                         </div>

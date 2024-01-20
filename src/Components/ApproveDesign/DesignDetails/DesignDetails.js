@@ -54,7 +54,7 @@ const DesignDetails = () => {
     }, [designApprove])
 
     return (
-        <div className='container-fluid' style={{ height: "100%" }}>
+        <div className='container-fluid mt-3' style={{ height: "100%" }}>
             <Grid
                 container
                 spacing={{ xs: 2, md: 3 }}

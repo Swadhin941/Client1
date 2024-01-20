@@ -33,7 +33,7 @@ const AvailablePackage = () => {
     }
 
     return (
-        <div className='container-fluid'>
+        <div className='container-fluid m-4'>
             <div className="row g-3">
                 {
                     availablePackage.length!==0 && availablePackage.map(item=><div className='col-12 col-sm-6 col-md-4 col-lg-3' key={item?._id}>

@@ -369,9 +369,15 @@ const Dashboard = () => {
             }
 
             {
-                <div className='d-flex justify-content-center align-items-center mt-5' style={{ height: "200px", backgroundColor: "black", color: "white" }}>
-                    <h2><Link to={'/Dashboard/availablePackage'} style={{color:"white"}}>Buy your subscription to explore more design</Link> </h2>
-                </div>
+                user?.role==='store' && !user?.isPaid && <>
+                    <div className='d-flex justify-content-center align-items-center mt-5' style={{  color: "white" }}>
+                        <h2 className='fw-bold text-primary'>Please complete your payment to access the designs.</h2>
+                    </div>
+                    <div className='d-flex justify-content-center'>
+                        <button className='btn btn-primary' onClick={() => navigate('/Dashboard/availablePackage')}>Pay</button>
+                    </div>
+                </>
+                
             }
         </div>
     );

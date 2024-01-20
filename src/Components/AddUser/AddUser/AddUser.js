@@ -32,41 +32,44 @@ TabPanel.propTypes = {
 }
 
 function a11yProps(index) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    }
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  }
 }
 
 const AddUser = () => {
-    const [value, setValue]= useState(0);
-    const handleChange = (event, newValue) => {
-        setValue(newValue)
-    }
-    return (
-        <div className='container-fluid'>
-            <Tabs
-                value={value}
-                onChange={handleChange}
-                aria-label="basic tabs example"
-                centered
-                sx={{ width: '90vw' }}
-            >
-                <Tab label="Normal Users" {...a11yProps(0)} />
-                <Tab label="Designer Users" {...a11yProps(1)} />
-                <Tab label="Add User" {...a11yProps(2)} />
-            </Tabs>
-            <TabPanel value={value} index={0}>
-                <NormalUser />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <DesignerUser />
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                <AddUserForm />
-            </TabPanel>
-        </div>
-    );
+  const [value, setValue] = useState(0);
+  const handleChange = (event, newValue) => {
+    setValue(newValue)
+  }
+  return (
+    <div className='container-fluid '>
+      <div className='d-flex justify-content-center'>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+          centered
+          sx={{ width: '90vw' }}
+        >
+          <Tab label="Normal Users" {...a11yProps(0)} />
+          <Tab label="Designer Users" {...a11yProps(1)} />
+          <Tab label="Add User" {...a11yProps(2)} />
+        </Tabs>
+      </div>
+
+      <TabPanel value={value} index={0}>
+        <NormalUser />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <DesignerUser />
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <AddUserForm />
+      </TabPanel>
+    </div>
+  );
 };
 
 export default AddUser;
