@@ -4,7 +4,7 @@ import useTitle from '../CustomHook/useTitle/useTitle';
 import useAxiosSecure from '../CustomHook/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
 import "./Dashboard.css";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import TagModal from '../Modals/TagModal/TagModal';
 
 const Dashboard = () => {
@@ -12,11 +12,11 @@ const Dashboard = () => {
     const { user } = useContext(SharedData);
     const [allDesigns, setAllDesigns] = useState([]);
     const [adminStatistics, setAdminStatistics] = useState(null);
-    const [designerStatistics, setDesignerStatistics]= useState(null);
+    const [designerStatistics, setDesignerStatistics] = useState(null);
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
-    const [filterValue, setFilterValue]= useState('');
-    const [allTag, setAllTag]= useState([]);
+    const [filterValue, setFilterValue] = useState('');
+    const [allTag, setAllTag] = useState([]);
 
     useEffect(() => {
         if (user?.role === 'admin') {
@@ -31,11 +31,11 @@ const Dashboard = () => {
         }
         if (user?.role === 'designer') {
             axiosSecure.get('/designerStatistics')
-            .then(res=>res.data)
-            .then(data=>{
-                console.log(data);
-                setDesignerStatistics(data);
-            })
+                .then(res => res.data)
+                .then(data => {
+                    console.log(data);
+                    setDesignerStatistics(data);
+                })
         }
 
     }, [user])
@@ -53,13 +53,13 @@ const Dashboard = () => {
                     toast.error(error.message);
                 })
         }
-        if(user?.role==='store'){
+        if (user?.role === 'store') {
             axiosSecure.get(`/viewAllDesigns?search=${filterValue}`)
-            .then(res=>res.data)
-            .then(data=>{
-                console.log(data);
-                setAllDesigns(data);
-            })
+                .then(res => res.data)
+                .then(data => {
+                    console.log(data);
+                    setAllDesigns(data);
+                })
         }
     }, [user, filterValue])
 
@@ -158,8 +158,8 @@ const Dashboard = () => {
         }
     ]
 
-    const handleReaction= (item)=>{
-        if(item?.personReaction){
+    const handleReaction = (item) => {
+        if (item?.personReaction) {
             let temp = item.likes.filter(data => data.email !== user?.email);
             let temp2 = [...allDesigns];
             temp2.forEach(element => {
@@ -170,18 +170,18 @@ const Dashboard = () => {
             })
             console.log(171, temp2)
             setAllDesigns([...temp2]);
-  
-            axiosSecure.put(`/productReaction?id=${item._id}`,{likes: temp})
-            .then(res=>res.data)
-            .then(data=>{
-                if(data.modifiedCount>=1){
-                }
-            })
-            .catch(error=>{
-                toast.error(error.message);
-            })
+
+            axiosSecure.put(`/productReaction?id=${item._id}`, { likes: temp })
+                .then(res => res.data)
+                .then(data => {
+                    if (data.modifiedCount >= 1) {
+                    }
+                })
+                .catch(error => {
+                    toast.error(error.message);
+                })
         }
-        else{
+        else {
             let temp2 = [...allDesigns];
             temp2.forEach(element => {
                 if (element._id === item._id) {
@@ -192,34 +192,34 @@ const Dashboard = () => {
             // console.log(192,temp2);
             setAllDesigns([...temp2]);
             let temp = [...item.likes]
-            axiosSecure.put(`/productReaction?id=${item?._id}`,{likes: temp})
-            .then(res=>res.data)
-            .then(data=>{
-                if(data.modifiedCount>=1){
+            axiosSecure.put(`/productReaction?id=${item?._id}`, { likes: temp })
+                .then(res => res.data)
+                .then(data => {
+                    if (data.modifiedCount >= 1) {
 
-                }
-            })
-            .catch(error=>{
-                toast.error(error.message);
-            })
+                    }
+                })
+                .catch(error => {
+                    toast.error(error.message);
+                })
         }
-        
+
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         axiosSecure.get("/allTag")
-        .then(res=>res.data)
-        .then(data=>{
-            setAllTag(data);
-        })
-        .catch(error=>{     
-            toast.error(error.message);
-        })
-    },[])
+            .then(res => res.data)
+            .then(data => {
+                setAllTag(data);
+            })
+            .catch(error => {
+                toast.error(error.message);
+            })
+    }, [])
 
 
-    const handleNavigate=(item)=>{
-        if(user?.role==="store" && item?.isPremium){
+    const handleNavigate = (item) => {
+        if (user?.role === "store" && item?.isPremium) {
             navigate(`/Dashboard/specific-design?id=${item._id}`)
         }
     }
@@ -229,7 +229,7 @@ const Dashboard = () => {
             <div className='d-flex justify-content-between mt-2 mb-2'>
                 <h2 className='m-0'>Hi, {user?.username}</h2>
                 {
-                    user?.role==="admin" && <button className='btn btn-primary' data-bs-target="#TagModal" data-bs-toggle="modal">All Tags</button>
+                    user?.role === "admin" && <button className='btn btn-primary' data-bs-target="#TagModal" data-bs-toggle="modal">All Tags</button>
                 }
             </div>
             <TagModal></TagModal>
@@ -289,7 +289,7 @@ const Dashboard = () => {
                                     <div className="card-body d-flex justify-content-center">
                                         <div>
                                             <div className='d-flex justify-content-center'><div className='border border-1' style={{ borderRadius: "50%", height: "45px", width: "45px", textAlign: "center", backgroundColor: item.iconBackColor }}><i className={`${item.icon} fs-3 ${item.id !== 3 ? "text-white" : "text-warning"}`}></i></div></div>
-                                            <div className='fs-4 text-center my-0' style={{ color: item.iconBackColor }}>{(item.id===1 && `${designerStatistics?.total_approved}`) || (item.id===2 && `${designerStatistics?.total_unapproved}`) || (item.id===3 && `${designerStatistics?.total_rejected}`) }</div>
+                                            <div className='fs-4 text-center my-0' style={{ color: item.iconBackColor }}>{(item.id === 1 && `${designerStatistics?.total_approved}`) || (item.id === 2 && `${designerStatistics?.total_unapproved}`) || (item.id === 3 && `${designerStatistics?.total_rejected}`)}</div>
                                             <div className='text-center my-0'>
                                                 <h5 className='my-0'>{item.name}</h5>
                                             </div>
@@ -303,26 +303,26 @@ const Dashboard = () => {
                 </div>
             }
             {
-                (user?.role === "admin" || user?.role==='store')  && <div className="row g-2 mt-4">
+                (user?.role === "admin" || (user?.role === 'store' && user?.isPaid)) && <div className="row g-2 mt-4">
                     <div className='d-flex justify-content-between'>
                         <h1 className='fw-bold mb-4'>View All Designs Here:</h1>
                         <div>
-                            <select name="filter" id="" defaultValue={"default"} className='form-select' onChange={(data)=>{
-                                if(data.target.value==='default'){
+                            <select name="filter" id="" defaultValue={"default"} className='form-select' onChange={(data) => {
+                                if (data.target.value === 'default') {
                                     setFilterValue('')
                                 }
-                                else{
+                                else {
                                     setFilterValue(data.target.value);
                                 }
                             }}>
                                 <option value="default">All</option>
                                 {
-                                    allTag.map((item, index)=><option value={item.name} key={index}>{item.name}</option>)
+                                    allTag.map((item, index) => <option value={item.name} key={index}>{item.name}</option>)
                                 }
                             </select>
                         </div>
                     </div>
-                    
+
                     {
                         allDesigns.map((item, index) => <div className='col-12 col-sm-6 col-md-4 col-lg-3' key={index}>
                             <div className="card" style={{ borderRadius: "10px", cursor: "pointer" }} >
@@ -334,17 +334,17 @@ const Dashboard = () => {
                                     </div>
                                 }
 
-                                <div className={item.isPremium ? "imgCardPremium" : 'imgCard'} onClick={()=>handleNavigate(item)}>
+                                <div className={item.isPremium ? "imgCardPremium" : 'imgCard'} onClick={() => handleNavigate(item)}>
                                     <img src={item.image} alt="" />
                                 </div>
-                                <div className="card-body" style={{borderBottom:"0px"}} onClick={()=>handleNavigate(item)}>
+                                <div className="card-body" style={{ borderBottom: "0px" }} onClick={() => handleNavigate(item)}>
                                     <div className="d-flex justify-content-between">
                                         <h5 className='fw-bold'>{item?.title}</h5>
                                         <div>
-                                            <span className='fs-3'>{item.likes.length}</span><span onClick={()=>handleReaction(item)}><i className={`bi ${item?.personReaction? "bi-heart-fill text-danger": "bi-heart"} fs-4`}></i></span>
+                                            <span className='fs-3'>{item.likes.length}</span><span onClick={() => handleReaction(item)}><i className={`bi ${item?.personReaction ? "bi-heart-fill text-danger" : "bi-heart"} fs-4`}></i></span>
                                         </div>
                                     </div>
-                                    
+
                                     <div className='d-flex'>
                                         {
                                             item.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB" }}>{tagItem}</div>)
@@ -355,7 +355,7 @@ const Dashboard = () => {
 
                                     </div>
                                 </div>
-                                <div className="card-footer" style={{borderTop:"0px"}}>
+                                <div className="card-footer" style={{ borderTop: "0px" }}>
                                     {
                                         user?.role === "admin" ? <button className='btn btn-warning w-100' onClick={() => navigate(`/Dashboard/specific-design?id=${item._id}`)}>View Details</button> : item?.isPremium ? <button className='btn btn-warning w-100' onClick={() => navigate('/Dashboard/availablePackage')}>Pay {item?.price}</button> : <button className='btn btn-warning w-100' onClick={() => navigate(`/Dashboard/specific-design?id=${item._id}`)}>View Details</button>
                                     }
@@ -363,9 +363,16 @@ const Dashboard = () => {
                             </div>
                         </div>)
                     }
+                    
                 </div>
+                
             }
 
+            {
+                <div className='d-flex justify-content-center align-items-center mt-5' style={{ height: "200px", backgroundColor: "black", color: "white" }}>
+                    <h2><Link to={'/Dashboard/availablePackage'} style={{color:"white"}}>Buy your subscription to explore more design</Link> </h2>
+                </div>
+            }
         </div>
     );
 };
