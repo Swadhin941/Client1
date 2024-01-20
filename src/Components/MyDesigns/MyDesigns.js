@@ -21,18 +21,19 @@ const MyDesigns = () => {
     const handleReaction = (item) => {
         if (item?.personReaction) {
             let temp = item.likes.filter(data => data.email !== user?.email);
+            let temp2 = [...allDesigns];
+            temp2.forEach(element => {
+                if (element._id === item?._id) {
+                    element.likes = [...temp];
+                    delete element?.personReaction
+                }
+            })
+            setAllDesigns(temp2);
+
             axiosSecure.put(`/productReaction?id=${item._id}`, { likes: temp })
                 .then(res => res.data)
                 .then(data => {
                     if (data.modifiedCount >= 1) {
-                        let temp2 = [...allDesigns];
-                        temp2.forEach(element => {
-                            if (element._id === item?._id) {
-                                element.likes = [...temp];
-                                delete element?.personReaction
-                            }
-                        })
-                        setAllDesigns(temp2);
                     }
                 })
                 .catch(error => {
@@ -40,20 +41,20 @@ const MyDesigns = () => {
                 })
         }
         else {
-            let temp = [...item.likes, { email: user?.email }]
+            let temp2 = [...allDesigns];
+            temp2.forEach(element => {
+                if (element._id === item._id) {
+                    element.likes = [...element.likes, { email: user?.email }];
+                    element.personReaction = true
+                }
+            })
+            setAllDesigns(temp2);
+            let temp = [...item.likes]
             axiosSecure.put(`/productReaction?id=${item?._id}`, { likes: temp })
                 .then(res => res.data)
                 .then(data => {
                     if (data.modifiedCount >= 1) {
-                        let temp2 = [...allDesigns];
-                        temp2.forEach(element => {
-                            if (element._id === item._id) {
-                                let temp2 = [...element.likes, { email: user?.email }];
-                                element.likes = [...temp2];
-                                element.personReaction = true
-                            }
-                        })
-                        setAllDesigns(temp2);
+                        
                     }
                 })
         }

@@ -5,6 +5,7 @@ import useAxiosSecure from '../CustomHook/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
 import "./Dashboard.css";
 import { useNavigate } from 'react-router-dom';
+import TagModal from '../Modals/TagModal/TagModal';
 
 const Dashboard = () => {
     useTitle("Lookaura- Dashboard")
@@ -14,6 +15,8 @@ const Dashboard = () => {
     const [designerStatistics, setDesignerStatistics]= useState(null);
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
+    const [filterValue, setFilterValue]= useState('');
+    const [allTag, setAllTag]= useState([]);
 
     useEffect(() => {
         if (user?.role === 'admin') {
@@ -38,10 +41,12 @@ const Dashboard = () => {
     }, [user])
 
     useEffect(() => {
+        console.log(filterValue);
         if (user?.role === "admin") {
-            axiosSecure.get('/allDesignsForAdmin')
+            axiosSecure.get(`/allDesignsForAdmin?search=${filterValue}`)
                 .then(res => res.data)
                 .then(data => {
+                    console.log(data)
                     setAllDesigns(data);
                 })
                 .catch(error => {
@@ -49,14 +54,14 @@ const Dashboard = () => {
                 })
         }
         if(user?.role==='store'){
-            axiosSecure.get('/viewAllDesigns')
+            axiosSecure.get(`/viewAllDesigns?search=${filterValue}`)
             .then(res=>res.data)
             .then(data=>{
                 console.log(data);
                 setAllDesigns(data);
             })
         }
-    }, [user])
+    }, [user, filterValue])
 
     const adminDashboardFirstCards = [
         {
@@ -155,19 +160,21 @@ const Dashboard = () => {
 
     const handleReaction= (item)=>{
         if(item?.personReaction){
-            let temp = item.likes.filter(data=>data.email!== user?.email);
+            let temp = item.likes.filter(data => data.email !== user?.email);
+            let temp2 = [...allDesigns];
+            temp2.forEach(element => {
+                if (element._id === item?._id) {
+                    element.likes = [...temp];
+                    delete element?.personReaction
+                }
+            })
+            console.log(171, temp2)
+            setAllDesigns([...temp2]);
+  
             axiosSecure.put(`/productReaction?id=${item._id}`,{likes: temp})
             .then(res=>res.data)
             .then(data=>{
                 if(data.modifiedCount>=1){
-                    let temp2= [...allDesigns];
-                    temp2.forEach(element=>{
-                        if(element._id===item?._id){
-                            element.likes= [...temp];
-                            delete element?.personReaction
-                        }
-                    })
-                    setAllDesigns(temp2);
                 }
             })
             .catch(error=>{
@@ -175,29 +182,50 @@ const Dashboard = () => {
             })
         }
         else{
-            let temp = [...item.likes, {email: user?.email}]
+            let temp2 = [...allDesigns];
+            temp2.forEach(element => {
+                if (element._id === item._id) {
+                    element.likes = [...element.likes, { email: user?.email }];
+                    element.personReaction = true
+                }
+            })
+            // console.log(192,temp2);
+            setAllDesigns([...temp2]);
+            let temp = [...item.likes]
             axiosSecure.put(`/productReaction?id=${item?._id}`,{likes: temp})
             .then(res=>res.data)
             .then(data=>{
                 if(data.modifiedCount>=1){
-                    let temp2= [...allDesigns];
-                    temp2.forEach(element=>{
-                        if(element._id===item._id){
-                            let temp2= [...element.likes, {email: user?.email}];
-                            element.likes=[...temp2];
-                            element.personReaction= true
-                        }
-                    })
-                    setAllDesigns(temp2);
+
                 }
+            })
+            .catch(error=>{
+                toast.error(error.message);
             })
         }
         
     }
 
+    useEffect(()=>{
+        axiosSecure.get("/allTag")
+        .then(res=>res.data)
+        .then(data=>{
+            setAllTag(data);
+        })
+        .catch(error=>{     
+            toast.error(error.message);
+        })
+    },[])
+
     return (
         <div className='container-fluid'>
-            <h2 className='mt-2'>Hi, {user?.username}</h2>
+            <div className='d-flex justify-content-between mt-2 mb-2'>
+                <h2 className='m-0'>Hi, {user?.username}</h2>
+                {
+                    user?.role==="admin" && <button className='btn btn-primary' data-bs-target="#TagModal" data-bs-toggle="modal">All Tags</button>
+                }
+            </div>
+            <TagModal></TagModal>
             {
                 user?.role === 'admin' && <div className="row g-2">
                     <h2 className='mb-5'>Total User: {adminStatistics?.totalUsers}</h2>
@@ -269,7 +297,25 @@ const Dashboard = () => {
             }
             {
                 (user?.role === "admin" || user?.role==='store')  && <div className="row g-2 mt-4">
-                    <h1 className='fw-bold mb-4'>View All Designs Here:</h1>
+                    <div className='d-flex justify-content-between'>
+                        <h1 className='fw-bold mb-4'>View All Designs Here:</h1>
+                        <div>
+                            <select name="filter" id="" defaultValue={"default"} className='form-select' onChange={(data)=>{
+                                if(data.target.value==='default'){
+                                    setFilterValue('')
+                                }
+                                else{
+                                    setFilterValue(data.target.value);
+                                }
+                            }}>
+                                <option value="default">All</option>
+                                {
+                                    allTag.map((item, index)=><option value={item.name} key={index}>{item.name}</option>)
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    
                     {
                         allDesigns.map((item, index) => <div className='col-12 col-sm-6 col-md-4 col-lg-3' key={index}>
                             <div className="card" style={{ borderRadius: "10px", cursor: "pointer" }} >

@@ -1,0 +1,8 @@
+.selectedTag{
+    color:rgb(5, 155, 155);
+    border: 1px solid aquamarine
+}
+.unSelectedTag{
+    color: black;
+    border: 1px solid transparent;
+}

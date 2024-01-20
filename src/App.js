@@ -25,7 +25,7 @@ function App() {
     {
       path: "/",
       element: <Main></Main>,
-      children:[
+      children:[        
         {
           path: "/",
           element: <PrivateRouter><Dashboard></Dashboard></PrivateRouter>

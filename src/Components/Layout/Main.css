@@ -1,12 +1,14 @@
-.nav-link{
+.side-link{
     color: rgb(212, 212, 212);
 }
+
 .active{
     color: white;
 }
-.nav-link:hover{
-    color: rgb(212, 212, 212)
+.side-link:hover{
+    color: white
 }
+
 @media screen and (min-width: 1201px) {
     .marginAuto{
         margin-left: 10%;

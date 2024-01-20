@@ -31,6 +31,7 @@ const DesignDetails = () => {
                         navigate(`/${searchParams.get('id')}`)
                     }
                     else {
+                        console.log(data);
                         setDesignerDetails(data);
                     }
                 })
@@ -76,22 +77,14 @@ const DesignDetails = () => {
                         </Grid>
                     </Paper>
                 </Grid>
-                <Grid item xs={6} alignItems="center">
+                <Grid item xs={6} alignItems="center" className='mt-4'>
                     <Paper sx={{ padding: 3, borderRadius: 2, minHeight: '100%' }}>
-                        <Carousel
-                            autoPlay={true}
-                            swipe={true}
-                            indicators={false}
-                            cycleNavigation={true}
-                            interval={5000}
-                            animation="fade"
-                        >
-
-                            <Item item={designDetails?.image} />
-                        </Carousel>
+                        <div>
+                            <img src={designDetails?.image} style={{ height: "auto", width: "100%" }} className={(user?.role === "admin" || (user?.role === "designer" && user?.email === designDetails?.uploaderEmail) || (user?.role === "store" && user?.email === designDetails?.buyerEmail)) ? "img-fluid" : designDetails?.isPremium ? `imgBlur` : "img-fluid"} alt="" />
+                        </div>
                     </Paper>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6} className='mt-4'>
                     <Paper sx={{ padding: 3, borderRadius: 2 }}>
                         <Typography variant="h5" color="initial" align="center">
                             <b>{designDetails?.title}</b>
@@ -100,9 +93,14 @@ const DesignDetails = () => {
                             {designDetails?.description}
                         </Typography>
                         <Box textAlign="center">
-                            <button className='btn btn-dark'>
-                                <a href={designDetails?.assets} download style={{ textDecoration: "none", color: "white" }}>Download</a>
-                            </button>
+                            {
+                                (user?.role === "admin" || (user?.role === "designer" && user?.email === designDetails?.uploaderEmail) || (user?.role === "store" && user?.email === designDetails?.buyerEmail)) ? <button className='btn btn-dark'>
+                                    <a href={designDetails?.assets} download style={{ textDecoration: "none", color: "white" }}>Download</a>
+                                </button> : !designDetails?.isPremium && <button className='btn btn-dark'>
+                                    <a href={designDetails?.assets} download style={{ textDecoration: "none", color: "white" }}>Download</a>
+                                </button>
+                            }
+
                         </Box>
                     </Paper>
                 </Grid>
