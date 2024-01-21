@@ -57,6 +57,7 @@ const Login = () => {
     }
     useEffect(()=>{
         if(user){
+            console.log(user);
             return navigate("/Dashboard", {replace: true});
         }
     },[user])
