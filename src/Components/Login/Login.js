@@ -57,7 +57,7 @@ const Login = () => {
     }
     useEffect(()=>{
         if(user){
-            navigate("/Dashboard", {replace: true});
+            return navigate("/Dashboard", {replace: true});
         }
     },[user])
 
