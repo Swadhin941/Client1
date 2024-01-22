@@ -6,10 +6,11 @@ import toast from 'react-hot-toast';
 import "./Dashboard.css";
 import { Link, useNavigate } from 'react-router-dom';
 import TagModal from '../Modals/TagModal/TagModal';
+import ConfirmModal from '../Modals/ConfirmModal/ConfirmModal';
 
 const Dashboard = () => {
-    useTitle("Lookaura- Dashboard")
-    const { user } = useContext(SharedData);
+    useTitle("Lookaura- Dashboard");
+    const { user, setUser } = useContext(SharedData);
     const [allDesigns, setAllDesigns] = useState([]);
     const [adminStatistics, setAdminStatistics] = useState(null);
     const [designerStatistics, setDesignerStatistics] = useState(null);
@@ -17,6 +18,9 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const [filterValue, setFilterValue] = useState('');
     const [allTag, setAllTag] = useState([]);
+    const [decision, setDecision] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [reload, setReload] = useState(false);
 
     useEffect(() => {
         if (user?.role === 'admin') {
@@ -33,7 +37,6 @@ const Dashboard = () => {
             axiosSecure.get('/designerStatistics')
                 .then(res => res.data)
                 .then(data => {
-                    console.log(data);
                     setDesignerStatistics(data);
                 })
         }
@@ -41,12 +44,11 @@ const Dashboard = () => {
     }, [user])
 
     useEffect(() => {
-        console.log(filterValue);
+        // console.log(filterValue);
         if (user?.role === "admin") {
             axiosSecure.get(`/allDesignsForAdmin?search=${filterValue}`)
                 .then(res => res.data)
                 .then(data => {
-                    console.log(data)
                     setAllDesigns(data);
                 })
                 .catch(error => {
@@ -57,11 +59,10 @@ const Dashboard = () => {
             axiosSecure.get(`/viewAllDesigns?search=${filterValue}`)
                 .then(res => res.data)
                 .then(data => {
-                    console.log(data);
                     setAllDesigns(data);
                 })
         }
-    }, [user, filterValue])
+    }, [user, filterValue, reload])
 
     const adminDashboardFirstCards = [
         {
@@ -168,7 +169,6 @@ const Dashboard = () => {
                     delete element?.personReaction
                 }
             })
-            console.log(171, temp2)
             setAllDesigns([...temp2]);
 
             axiosSecure.put(`/productReaction?id=${item._id}`, { likes: temp })
@@ -223,6 +223,26 @@ const Dashboard = () => {
             navigate(`/Dashboard/specific-design?id=${item._id}`)
         }
     }
+
+    useEffect(() => {
+        if (decision) {
+            axiosSecure.put('/updateProduct', { buyerEmail: user?.email, isSold: true, _id: selectedItem?._id, remainingCoins: parseInt(user?.coins) - parseInt(selectedItem?.price)  })
+                .then(res => res.data)
+                .then(data => {
+                    if (data.modifiedCount >= 1) {
+                        let temp = {...user};
+                        temp.coins = parseInt(user?.coins)-parseInt(selectedItem?.price) 
+                        setUser(temp);
+                        toast.success("Product purchased successfully");
+                        setReload(!reload);
+                        setDecision(false);
+                    }
+                })
+        }
+        else {
+            setSelectedItem(null);
+        }
+    }, [decision])
 
     return (
         <div className='container-fluid'>
@@ -337,15 +357,15 @@ const Dashboard = () => {
                                 <div className={item.isPremium ? "imgCardPremium" : 'imgCard'} onClick={() => handleNavigate(item)}>
                                     <img src={item.image} alt="" />
                                 </div>
-                                <div className="card-body" style={{ borderBottom: "0px" }} onClick={() => handleNavigate(item)}>
+                                <div className="card-body" style={{ borderBottom: "0px" }}>
                                     <div className="d-flex justify-content-between">
-                                        <h5 className='fw-bold'>{item?.title}</h5>
+                                        <h5 className='fw-bold' onClick={() => handleNavigate(item)}>{item?.title}</h5>
                                         <div>
                                             <span className='fs-3'>{item.likes.length}</span><span onClick={() => handleReaction(item)}><i className={`bi ${item?.personReaction ? "bi-heart-fill text-danger" : "bi-heart"} fs-4`}></i></span>
                                         </div>
                                     </div>
 
-                                    <div className='d-flex'>
+                                    <div className='d-flex' onClick={() => handleNavigate(item)}>
                                         {
                                             item.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB" }}>{tagItem}</div>)
                                         }
@@ -357,27 +377,28 @@ const Dashboard = () => {
                                 </div>
                                 <div className="card-footer" style={{ borderTop: "0px" }}>
                                     {
-                                        user?.role === "admin" ? <button className='btn btn-warning w-100' onClick={() => navigate(`/Dashboard/specific-design?id=${item._id}`)}>View Details</button> : item?.isPremium ? <button className='btn btn-warning w-100' onClick={() => navigate('/Dashboard/availablePackage')}>Pay {item?.price}</button> : <button className='btn btn-warning w-100' onClick={() => navigate(`/Dashboard/specific-design?id=${item._id}`)}>View Details</button>
+                                        user?.role === "admin" ? <button className='btn btn-warning w-100' onClick={() => navigate(`/Dashboard/specific-design?id=${item._id}`)}>View Details</button> : item?.isPremium ? user?.coins >= parseInt(item?.price) ? <button className='btn btn-warning w-100' data-bs-target="#ConfirmModal" data-bs-toggle="modal" onClick={() => setSelectedItem(item)}>Pay {item?.price}</button> : <button className='btn btn-warning w-100' onClick={() => navigate('/Dashboard/availablePackage')}>Pay {item?.price}</button> : <button className='btn btn-warning w-100' onClick={() => navigate(`/Dashboard/specific-design?id=${item._id}`)}>View Details</button>
                                     }
                                 </div>
                             </div>
                         </div>)
                     }
-                    
+                    <ConfirmModal setDecision={setDecision}></ConfirmModal>
+
                 </div>
-                
+
             }
 
             {
-                user?.role==='store' && !user?.isPaid && <>
-                    <div className='d-flex justify-content-center align-items-center mt-5' style={{  color: "white" }}>
+                user?.role === 'store' && !user?.isPaid && <>
+                    <div className='d-flex justify-content-center align-items-center mt-5' style={{ color: "white" }}>
                         <h2 className='fw-bold text-primary'>Please complete your payment to access the designs.</h2>
                     </div>
                     <div className='d-flex justify-content-center'>
                         <button className='btn btn-primary' onClick={() => navigate('/Dashboard/availablePackage')}>Pay</button>
                     </div>
                 </>
-                
+
             }
         </div>
     );

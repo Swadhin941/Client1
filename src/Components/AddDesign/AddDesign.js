@@ -6,8 +6,10 @@ import toast from 'react-hot-toast';
 import ClockLoader from 'react-spinners/ClockLoader';
 import TagModal from '../Modals/TagModal/TagModal';
 import DesignerTagModal from '../Modals/DesignerTagModal/DesignerTagModal';
+import useTitle from '../CustomHook/useTitle/useTitle';
 
 const AddDesign = () => {
+    useTitle("Lookaura- Add Design");
     const { user } = useContext(SharedData);
     const [title, setTitle] = useState(null);
     const [description, setDescription] = useState(null);

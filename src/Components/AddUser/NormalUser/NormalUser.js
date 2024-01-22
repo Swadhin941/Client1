@@ -22,6 +22,7 @@ import ViewUser from '../../Modals/ViewUser/ViewUser'
 import EditUser from '../../Modals/EditUser/EditUser'
 import DeleteUser from '../../Modals/DeleteUser/DeleteUser'
 import useAxiosSecure from '../../CustomHook/useAxiosSecure/useAxiosSecure'
+import toast from 'react-hot-toast'
 
 
 const listItemBtn = {
@@ -108,6 +109,9 @@ export default function StickyHeadTable() {
             .then(data=>{
                 console.log(data);
                 setUsers(data);
+            })
+            .catch(error=>{
+                toast.error(error.message)
             })
         }
     }, [reload, user])

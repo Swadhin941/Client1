@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import NormalUser from '../NormalUser/NormalUser';
 import DesignerUser from '../DesignerUser/DesignerUser';
 import AddUserForm from '../AddUserForm/AddUserForm';
+import useTitle from '../../CustomHook/useTitle/useTitle';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -39,6 +40,7 @@ function a11yProps(index) {
 }
 
 const AddUser = () => {
+  useTitle("Lookaura- User Details");
   const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue)

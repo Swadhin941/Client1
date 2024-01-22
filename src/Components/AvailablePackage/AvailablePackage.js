@@ -4,13 +4,17 @@ import useAxiosSecure from '../CustomHook/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
 import PackageModal from '../Modals/PackageModal/PackageModal';
 import Spinner from '../Spinner/Spinner';
+import { useNavigate } from 'react-router-dom';
+import useTitle from '../CustomHook/useTitle/useTitle';
 
 const AvailablePackage = () => {
-    const { user } = useContext(SharedData);
+    useTitle("Lookaura- Available Package");
+    const { user, forceLoading, setForceLoading } = useContext(SharedData);
     const [availablePackage, setAvailablePackage] = useState([]);
     const [reload, setReload] = useState(false);
     const [axiosSecure] = useAxiosSecure();
     const [dataLoading, setDataLoading]= useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (user !== false) {
@@ -27,6 +31,71 @@ const AvailablePackage = () => {
                 })
         }
     }, [user, reload])
+
+    const handleOrder= (item)=>{
+        axiosSecure.post("/order",{
+            ...item
+        })
+        .then(res=>res.data)
+        .then(data=>{
+            // console.log(data);
+            if(data){
+                console.log(data);
+                const options = {
+                    key: 'rzp_test_HJtppEK315iHxh',
+                    currency: data.currency,
+                    amount: data.amount,
+                    name: 'Design Payment',
+                    description: 'Design Payment',
+                    order_id: data.id,
+                    image:
+                        'https://images.crunchbase.com/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/raml2xzpwgc9tpomgaxd',
+                    handler: async function (response) {
+                        console.log(response)
+                        axiosSecure.post('/order/validate',{
+                            order_id: response.razorpay_order_id,
+                            signature: response.razorpay_signature,
+                            paymentId: response.razorpay_payment_id,
+                            email: user?.email,
+                            timeMili: Date.now(),
+                            date: new Date().toLocaleDateString(),
+                            time: new Date().toLocaleTimeString(),
+                            packagePrice: data.amount/100,
+                            packageCoins: parseInt(item.coins),
+                            phone_number: user?.phone_number,
+                            username: user?.username, 
+                            currentCoins: user?.coins 
+                        })
+                        .then(res=>res.data)
+                        .then(data=>{
+                            if(data.acknowledged){
+                                toast.success("Payment successful");
+                                setForceLoading(!forceLoading);
+                                navigate('/Dashboard');
+                            }
+                            if(data.message){
+                                toast.error(data.message);
+                            }
+                        })
+                        .catch(error=>{
+                            toast.error(error.message);
+                        })
+                        
+                    },
+                    prefill: {
+                        name: user?.username,
+                        email: user?.email,
+                        contact: user?.phone_number,
+                    },
+                }
+                const paymentObject = new window.Razorpay(options)
+                paymentObject.on("payment.failed", function(response){
+                    toast.error(response.message);
+                })
+                paymentObject.open()
+            }
+        })
+    }
 
     if(dataLoading){
         return <Spinner></Spinner>
@@ -48,7 +117,7 @@ const AvailablePackage = () => {
                             </div>
                             <div className="card-footer" style={{borderTop:"0px"}}>
                                 <div className='mt-2'>
-                                    <button className='btn btn-primary w-100'>Pay ₹{item.price}</button>
+                                    <button className='btn btn-primary w-100' onClick={()=>handleOrder(item)}>Pay ₹{item.price}</button>
                                 </div>
                             </div>
                         </div>

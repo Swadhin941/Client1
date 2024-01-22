@@ -10,8 +10,7 @@ const PrivateRouter = ({children}) => {
     if(loading){
         return <Spinner></Spinner>
     };
-    console.log(loading, Date.now(), user);
-    if(user !== false && user?.email){
+    if(user && user?.email){
         return children;
     }
 

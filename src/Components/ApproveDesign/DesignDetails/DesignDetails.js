@@ -31,9 +31,12 @@ const DesignDetails = () => {
                         navigate(`/${searchParams.get('id')}`)
                     }
                     else {
-                        console.log(data);
+                        // console.log(data);
                         setDesignerDetails(data);
                     }
+                })
+                .catch(error=>{
+                    toast.error(error.message);
                 })
         }
     }, [user, reload])
@@ -49,6 +52,9 @@ const DesignDetails = () => {
                         toast.success("Design approved")
                         setReload(!reload);
                     }
+                })
+                .catch(error=>{
+                    toast.error(error.message);
                 })
         }
     }, [designApprove])

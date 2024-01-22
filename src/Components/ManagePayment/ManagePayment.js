@@ -16,6 +16,9 @@ import {
 } from '@mui/material'
 import TableCell, { tableCellClasses } from '@mui/material/TableCell'
 import Spinner from '../Spinner/Spinner'
+import useAxiosSecure from '../CustomHook/useAxiosSecure/useAxiosSecure'
+import toast from 'react-hot-toast'
+import useTitle from '../CustomHook/useTitle/useTitle'
 
 const listItemBtn = {
     justifyContent: 'initial',
@@ -48,11 +51,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }))
 
 const columns = [
+    { id: 'Payment Id', label: 'Payment Id', minWidth: 150 },
+    { id: 'Order Id', label: 'Order Id', minWidth: 150 },
     { id: 'email', label: 'Email', minWidth: 150 },
+    { id: 'Username', label: 'username', minWidth: 150 },
     { id: 'contact', label: 'Contact', minWidth: 150 },
     { id: 'amount', label: 'Amount (in Rs.)', minWidth: 150 },
-    { id: 'vpa', label: 'VPA', minWidth: 150 },
-    { id: 'method', label: 'Method', minWidth: 150 },
+    { id: 'Coins', label: 'Coins', minWidth: 150 },
+    { id: 'Date & time', label: 'Date & time', minWidth: 150 },
 ]
 
 const style = {
@@ -67,11 +73,13 @@ const style = {
 }
 
 export default function StickyHeadTable() {
+    useTitle("Lookaura- Manage Payment");
     const [transactions, setTransactions] = useState([])
     const [userId, setUserId] = useState()
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
     const [state, setState] = useState(false)
+    const [axiosSecure]= useAxiosSecure();
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
@@ -83,7 +91,15 @@ export default function StickyHeadTable() {
     }
 
     useEffect(() => {
-        
+        axiosSecure.get('/allPayment')
+        .then(res=>res.data)
+        .then(data=>{
+            setTransactions(data);
+        })
+        .catch(error=>{
+
+            toast.error(error.message);
+        })
     }, [])
 
     return (
@@ -114,11 +130,14 @@ export default function StickyHeadTable() {
                             ).map((row) => {
                                 return (
                                     <StyledTableRow role="checkbox" tabIndex={-1} key={row.code}>
+                                        <StyledTableCell>{row.paymentId}</StyledTableCell>
+                                        <StyledTableCell>{row.order_id}</StyledTableCell>
                                         <StyledTableCell>{row.email}</StyledTableCell>
-                                        <StyledTableCell>{row.contact}</StyledTableCell>
-                                        <StyledTableCell >{(row.amount) / 100}</StyledTableCell>
-                                        <StyledTableCell >{row.vpa}</StyledTableCell>
-                                        <StyledTableCell >{row.method}</StyledTableCell>
+                                        <StyledTableCell>{row.username}</StyledTableCell>
+                                        <StyledTableCell>{row.phone_number}</StyledTableCell>
+                                        <StyledTableCell >{(row.packagePrice)}</StyledTableCell>
+                                        <StyledTableCell >{row.packageCoins}</StyledTableCell>
+                                        <StyledTableCell ><div>{row.date}</div><div>{row.time}</div></StyledTableCell>
                                     </StyledTableRow>
                                 )
                             })}

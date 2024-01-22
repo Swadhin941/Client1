@@ -4,8 +4,10 @@ import { SharedData } from '../../SharedData/SharedContext';
 import useAxiosSecure from '../../CustomHook/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
 import "../../Dashboard/Dashboard.css";
+import useTitle from '../../CustomHook/useTitle/useTitle';
 
 const ReviewDesigns = () => {
+    useTitle("Lookaura- Review design");
     const { user } = useContext(SharedData);
     const [axiosSecure] = useAxiosSecure();
     const [searchParams, setSearchParams] = useSearchParams();

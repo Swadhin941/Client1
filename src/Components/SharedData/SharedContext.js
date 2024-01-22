@@ -5,6 +5,9 @@ export const SharedData = createContext();
 const SharedContext = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [forceLoading, setForceLoading]= useState(false);
+    
+
     const login = (email, password) => {
         setLoading(true);
         return fetch(`${process.env.REACT_APP_SERVER}/login`, {
@@ -25,6 +28,7 @@ const SharedContext = ({ children }) => {
 
     useEffect(() => {
         setLoading(true);
+        // console.log("From observer");
         const subscriber = async () => {
             setLoading(true);
             try{
@@ -50,9 +54,9 @@ const SharedContext = ({ children }) => {
             setLoading(false);
         }
         return () => subscriber();
-    }, [])
+    }, [forceLoading])
 
-    const authInfo = { login, setUser, loading, setLoading, user, logout }
+    const authInfo = { login, setUser, loading, setLoading, user, logout, setForceLoading, forceLoading }
     return (
         <div>
             <SharedData.Provider value={authInfo}>

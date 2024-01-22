@@ -4,8 +4,10 @@ import { SharedData } from '../SharedData/SharedContext';
 import "../Dashboard/Dashboard.css";
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import useTitle from '../CustomHook/useTitle/useTitle';
 
 const MyDesigns = () => {
+    useTitle("Lookaura- My design");
     const [allDesigns, setAllDesigns] = useState([]);
     const { user } = useContext(SharedData);
     const [axiosSecure] = useAxiosSecure();
