@@ -3,6 +3,7 @@ import { SharedData } from '../../SharedData/SharedContext';
 import useAxiosSecure from '../../CustomHook/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
 import ClockLoader from 'react-spinners/ClockLoader';
+import AWS from "aws-sdk";
 
 const ProfileModal = () => {
     const { user, setUser } = useContext(SharedData);
@@ -11,6 +12,11 @@ const ProfileModal = () => {
     const [passwordLoading, setPasswordLoading] = useState(false);
     const [tempPicture, setTempPicture]= useState(null);
     const [photoLoading, setPhotoLoading]= useState(false);
+    const s3 =new AWS.S3({
+        accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+        secretAccessKey: process.env.REACT_APP_AWS_SECRET_KEY,
+        region: process.env.REACT_APP_REGION
+    })
 
     const handleUploadPhoto= (e)=>{
         if (e.target.files[0].type.split('/')[1].toLowerCase() === 'jpg' || e.target.files[0].type.split('/')[1].toLowerCase() === 'png' || e.target.files[0].type.split('/')[1].toLowerCase() === 'jpeg'){
@@ -45,43 +51,42 @@ const ProfileModal = () => {
             })
     }
 
-    const handlePictureSave= ()=>{
+    const handlePictureSave= async()=>{
         setPhotoLoading(true);
-        const formData = new FormData();
-        formData.append("image", tempPicture)
-        console.log(formData);
-        fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_imgBB}`, {
-            method: "POST",
-            body: formData
-        })
-        .then(res=>res.json())
-        .then(imgData=>{
-            console.log(imgData);
-            if(imgData.success){
-                axiosSecure.put(`/changePassword?user=${user?.email}`,{
-                    photoURL: imgData.data.url
+        // const formData = new FormData();
+        // formData.append("image", tempPicture)
+        // console.log(formData);
+        const params = {
+            Bucket: process.env.REACT_APP_BUCKET,
+            Key: tempPicture?.name,
+            Body: tempPicture
+        }
+        try{
+            const response = await s3.upload(params).promise()
+            if(response.Location){
+                axiosSecure.put(`/changePassword?user=${user?.email}`, {
+                    photoURL: response.Location
                 })
-                .then(res=>res.data)
-                .then(data=>{
-                    if(data.modifiedCount>=1){
-                        let temp = {...user};
-                        temp.photoURL= imgData.data.url;
-                        setUser(temp);
-                        setPhotoLoading(false)
-                        setTempPicture(null);
-
-                    }
-                })
-                .catch(error=>{
-                    toast.error(error.message);
-                    setPhotoLoading(false);
-                })
+                    .then(res => res.data)
+                    .then(data => {
+                        if (data.modifiedCount >= 1) {
+                            let temp = { ...user };
+                            temp.photoURL = response.Location;
+                            setUser(temp);
+                            setPhotoLoading(false)
+                            setTempPicture(null);
+                        }
+                    })
+                    .catch(error => {
+                        toast.error(error.message);
+                        setPhotoLoading(false);
+                    })
             }
-        })
-        .catch(error=>{
+        }
+        catch(error){
             toast.error(error.message);
             setPhotoLoading(false);
-        })
+        }
     }
 
     return (

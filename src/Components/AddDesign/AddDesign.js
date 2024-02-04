@@ -85,7 +85,7 @@ const AddDesign = () => {
                 }
                 const imgResponse = await s3.upload(params2).promise();
                 if(imgResponse.Location){
-                    console.log(response.Location, imgResponse.Location)
+                    // console.log(response.Location, imgResponse.Location)
                     axiosSecure.post(`/addDesign?user=${user?.email}`, { title, description, uploaderEmail: user?.email, uploaderName: user?.username, isApproved: false, image: imgResponse.Location, assets: response.Location, likes: [], isPremium: checked, isSold: false, isRejected: false, tags: [...tags] })
                         .then(res => res.data)
                         .then(data => {
