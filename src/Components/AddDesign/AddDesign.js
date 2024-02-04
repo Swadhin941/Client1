@@ -7,6 +7,7 @@ import ClockLoader from 'react-spinners/ClockLoader';
 import TagModal from '../Modals/TagModal/TagModal';
 import DesignerTagModal from '../Modals/DesignerTagModal/DesignerTagModal';
 import useTitle from '../CustomHook/useTitle/useTitle';
+import AWS from 'aws-sdk';
 
 const AddDesign = () => {
     useTitle("Lookaura- Add Design");
@@ -19,6 +20,11 @@ const AddDesign = () => {
     const [checked, setChecked] = useState(true);
     const [dataLoading, setDataLoading] = useState(false);
     const [axiosSecure] = useAxiosSecure();
+    const s3 = new AWS.S3({
+        accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
+        secretAccessKey: process.env.REACT_APP_AWS_SECRET_KEY,
+        region: process.env.REACT_APP_REGION
+    })
 
     const handleChangeTitle = (e) => {
         setTitle(e.target.value);
@@ -40,7 +46,7 @@ const AddDesign = () => {
         setChecked(!checked);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
 
         if (tags.length === 0) {
             toast.error("Please enter some tags");
@@ -63,38 +69,29 @@ const AddDesign = () => {
             return;
         }
         setDataLoading(true)
-        const imgFormData = new FormData();
-        imgFormData.append('image', image);
-        const assetsFormData = new FormData();
-        assetsFormData.append('file', assets);
-        assetsFormData.append('upload_preset', process.env.REACT_APP_upload_preset);
-        assetsFormData.append('cloud_name', process.env.REACT_APP_cloud_name);
-        fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_imgBB}`, {
-            method: "POST",
-            body: imgFormData
-        })
-            .then(res => res.json())
-            .then(imgData => {
-                if (imgData.success) {
-                    fetch(`https://api.cloudinary.com/v1_1/${process.env.REACT_APP_cloud_name}/image/upload`, {
-                        method: "POST",
-                        body: assetsFormData
-                    })
-                        .then(res => res.json())
-                        .then(assetData => {
-                            if (assetData.url) {
-                                axiosSecure.post(`/addDesign?user=${user?.email}`, { assets, title, description, uploaderEmail: user?.email, uploaderName: user?.username, isApproved: false, image: imgData.data.url, assets: assetData.url, likes: [], isPremium: checked, isSold: false, isRejected: false, tags: [...tags] })
-                                    .then(res => res.data)
-                                    .then(data => {
-                                        if (data.acknowledged) {
-                                            toast.success("Design posted")
-                                            setDataLoading(false)
-                                        }
-                                    })
-                                    .catch(error => {
-                                        toast.error(error.message);
-                                        setDataLoading(false);
-                                    })
+    
+        const  params = {
+            Bucket: process.env.REACT_APP_BUCKET,
+            Key: assets?.name,
+            Body: assets
+        }
+        try{
+            const response = await s3.upload(params).promise()
+            if(response.Location){
+                let params2 = {
+                    Bucket: process.env.REACT_APP_BUCKET,
+                    Key: image?.name,
+                    Body: image
+                }
+                const imgResponse = await s3.upload(params2).promise();
+                if(imgResponse.Location){
+                    console.log(response.Location, imgResponse.Location)
+                    axiosSecure.post(`/addDesign?user=${user?.email}`, { title, description, uploaderEmail: user?.email, uploaderName: user?.username, isApproved: false, image: imgResponse.Location, assets: response.Location, likes: [], isPremium: checked, isSold: false, isRejected: false, tags: [...tags] })
+                        .then(res => res.data)
+                        .then(data => {
+                            if (data.acknowledged) {
+                                toast.success("Design posted")
+                                setDataLoading(false)
                             }
                         })
                         .catch(error => {
@@ -102,11 +99,13 @@ const AddDesign = () => {
                             setDataLoading(false);
                         })
                 }
-            })
-            .catch(error => {
-                toast.error(error.message);
-                setDataLoading(false);
-            })
+            }
+        }
+        catch(error){
+            toast.error(error.message);
+            setDataLoading(false);
+        }
+        
     }
 
 
@@ -119,7 +118,7 @@ const AddDesign = () => {
             <div className="row mt-4">
                 <div className="col-6 d-lg-flex justify-content-center d-none d-md-none ">
                     <img
-                        src={'https://i.ibb.co/Jq7rkcY/side-Image.png'}
+                        src={'https://lookaura-bucket-admin.s3.amazonaws.com/sideImage.png'}
                         alt="sideimg"
                         className="rounded-4"
                         style={{ height: "25rem" }}

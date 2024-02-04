@@ -12,6 +12,7 @@ const ReviewDesigns = () => {
     const [axiosSecure] = useAxiosSecure();
     const [searchParams, setSearchParams] = useSearchParams();
     const [allDesigns, setAllDesigns] = useState([]);
+    const [temp, setTemp]= useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,23 +30,32 @@ const ReviewDesigns = () => {
                             navigate(-1);
                         }
                         else {
+                            // console.log(data)
+                            // setTemp(data);
                             setAllDesigns(data);
                         }
                     }
-                    console.log(data)
+                    // console.log(data)
                 })
                 .catch(error => {
                     toast.error(error.message);
                 })
         }
     }, [user])
+
+    useEffect(()=>{
+        if(temp.length!==0){
+            console.log(temp);
+        }
+    },[temp])
+
     return (
         <div className='container-fluid'>
             <h2 className='fw-bold'>Unapproved Designs</h2>
             <div className="row mt-5">
                 {
-                    allDesigns.map((item, index) => <div className='col-12 col-sm-6 col-md-4 col-lg-3' key={index}>
-                        <div className="card" style={{ borderRadius: "10px" }} onClick={() => navigate(`/specific-design?id=${item._id}`)}>
+                   allDesigns.length!==0 &&  allDesigns.map((item, index) => <div className='col-12 col-sm-6 col-md-4 col-lg-3' key={index}>
+                       <div className="card" style={{ borderRadius: "10px" }} onClick={() => navigate(`/Dashboard/specific-design?id=${item?._id}`)}>
                             {
                                 item.isPremium && <div className='d-flex justify-content-end'>
                                     <div style={{ position: "absolute", zIndex: "1000", top: "-7px" }}>
@@ -54,20 +64,21 @@ const ReviewDesigns = () => {
                                 </div>
                             }
 
-                            <div className={item.isPremium ? "imgCardPremium" : 'imgCard'}>
-                                <img src={item.image} alt="" />
+                            <div className={item?.isPremium ? "imgCardPremium" : 'imgCard'}>
+                                <img src={item?.image} alt="" />
                             </div>
                             <div className="card-body">
                                 <h5 className='fw-bold'>{item?.title}</h5>
-                                <div className='d-flex'>
+                                <div className='d-flex' style={{flexWrap:"wrap"}}>
                                     {
-                                        item.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB" }}>{tagItem}</div>)
+                                        item?.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB", fontSize:"10px" }}>{tagItem?.name || tagItem}</div>)
                                     }
                                 </div>
                             </div>
                         </div>
                     </div>)
                 }
+                
             </div>
         </div>
     );

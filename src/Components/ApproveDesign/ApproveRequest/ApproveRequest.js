@@ -62,7 +62,7 @@ const ApproveRequest = () => {
                                             <button className='btn btn-dark' data-bs-toggle="modal" data-bs-target="#ViewUser" onClick={() => setDesignerDetails(item)}>Designer Details</button>
                                         </div>
                                         <div className='mx-4'>
-                                            <button className='btn btn-outline-dark' onClick={()=>navigate(`/review-designs?user=${item?.email}`)}>Review</button>
+                                            <button className='btn btn-outline-dark' onClick={() => navigate(`/Dashboard/review-designs?user=${item?.email}`)}>Review</button>
                                         </div>
                                     </div>
                                 </div>

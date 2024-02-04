@@ -65,7 +65,7 @@ const Login = () => {
         <div className='container-fluid ps-0 pe-0'>
             <div className='d-flex'>
                 <div className='loginImgSection'>
-                    <img src={'https://i.ibb.co/4ZszKJN/login.png'} alt="" />
+                    <img src={'https://lookaura-bucket-admin.s3.amazonaws.com/login.png'} alt="" />
                 </div>
                 <div className='d-flex justify-content-center align-items-center w-100'>
                     <div className="card w-75 border-0">

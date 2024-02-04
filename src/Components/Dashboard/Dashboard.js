@@ -49,6 +49,7 @@ const Dashboard = () => {
             axiosSecure.get(`/allDesignsForAdmin?search=${filterValue}`)
                 .then(res => res.data)
                 .then(data => {
+                    // console.log(data);
                     setAllDesigns(data);
                 })
                 .catch(error => {
@@ -365,9 +366,9 @@ const Dashboard = () => {
                                         </div>
                                     </div>
 
-                                    <div className='d-flex' onClick={() => handleNavigate(item)}>
+                                    <div className='d-flex' onClick={() => handleNavigate(item)} style={{flexWrap:"wrap"}}>
                                         {
-                                            item.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB" }}>{tagItem}</div>)
+                                            item.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB", fontSize:"10px" }}>{tagItem?.name || tagItem}</div>)
                                         }
                                     </div>
                                     <div className='mt-2'>

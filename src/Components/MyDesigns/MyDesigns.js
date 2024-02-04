@@ -96,9 +96,9 @@ const MyDesigns = () => {
                                         </div>
                                     </div>
 
-                                    <div className='d-flex'>
+                                    <div className='d-flex' style={{flexWrap:"wrap"}}>
                                         {
-                                            item.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB" }}>{tagItem}</div>)
+                                            item.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB", fontSize:"10px" }}>{tagItem?.name||tagItem}</div>)
                                         }
                                     </div>
                                     <div className='mt-2'>
