@@ -1,26 +1,28 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import useAxiosSecure from '../../CustomHook/useAxiosSecure/useAxiosSecure';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { SharedData } from '../../SharedData/SharedContext';
 
-const PriceModal = ({reload, setReload}) => {
-    const [axiosSecure]= useAxiosSecure();
-    const [searchParams, setSearchParams]= useSearchParams();
+const PriceModal = ({ reload, setReload }) => {
+    const { user } = useContext(SharedData);
+    const [axiosSecure] = useAxiosSecure();
+    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
-    const handleSubmit= (e)=>{
+    const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
         const price = form.price.value;
         console.log(searchParams.get("id"), price);
-        axiosSecure.put(`/approveDesign?id=${searchParams.get("id")}`,{
+        axiosSecure.put(`/approveDesign?id=${searchParams.get("id")}&&user=${user?.email}`, {
             isApproved: true, price: price
         })
-        .then(res=>res.data)
-        .then(data=>{
-            if(data.modifiedCount>=1){
-                setReload(!reload)
-                navigate(-1);
-            }
-        })
+            .then(res => res.data)
+            .then(data => {
+                if (data.modifiedCount >= 1) {
+                    setReload(!reload)
+                    navigate(-1);
+                }
+            })
     }
     return (
         <div className='modal fade' id='PriceModal' data-bs-backdrop="static" data-bs-keyboard="false">

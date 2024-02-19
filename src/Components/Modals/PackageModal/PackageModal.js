@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import useAxiosSecure from '../../CustomHook/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
+import { SharedData } from '../../SharedData/SharedContext';
 
 const PackageModal = ({reload, setReload}) => {
     const [axiosSecure]= useAxiosSecure();
+    const {user}= useContext(SharedData);
     const handleSubmit= (e)=>{
         e.preventDefault();
         const form= e.target;
         const price = form.price.value;
         const coins= form.coins.value;
         const description= form.description.value;
-        axiosSecure.post('/postPackage', {
+        axiosSecure.post(`/postPackage?user=${user?.email}`, {
             price, coins, description
         })
         .then(res=>res.data)

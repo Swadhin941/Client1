@@ -7,6 +7,7 @@ import "./Dashboard.css";
 import { Link, useNavigate } from 'react-router-dom';
 import TagModal from '../Modals/TagModal/TagModal';
 import ConfirmModal from '../Modals/ConfirmModal/ConfirmModal';
+import DataSpinner from '../DataSpinner/DataSpinner';
 
 const Dashboard = () => {
     useTitle("Lookaura- Dashboard");
@@ -21,23 +22,33 @@ const Dashboard = () => {
     const [decision, setDecision] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [reload, setReload] = useState(false);
+    const [dataLoading, setDataLoading] = useState(false);
+    const [allDataLoading, setAllDataLoading]= useState(false);
 
     useEffect(() => {
         if (user?.role === 'admin') {
-            axiosSecure.get('/adminStatistics')
+            setDataLoading(true);
+            axiosSecure.get(`/adminStatistics?user=${user?.email}`)
                 .then(res => res.data)
                 .then(data => {
                     setAdminStatistics(data);
+                    setDataLoading(false);
                 })
                 .catch(error => {
+                    setDataLoading(false);
                     toast.error(error.message)
                 })
         }
         if (user?.role === 'designer') {
-            axiosSecure.get('/designerStatistics')
+            setDataLoading(true);
+            axiosSecure.get(`/designerStatistics?user=${user?.email}`)
                 .then(res => res.data)
                 .then(data => {
+                    setDataLoading(false);
                     setDesignerStatistics(data);
+                })
+                .catch(error => {
+                    toast.error(error.message);
                 })
         }
 
@@ -46,21 +57,26 @@ const Dashboard = () => {
     useEffect(() => {
         // console.log(filterValue);
         if (user?.role === "admin") {
-            axiosSecure.get(`/allDesignsForAdmin?search=${filterValue}`)
+            setAllDataLoading(true);
+            axiosSecure.get(`/allDesignsForAdmin?search=${filterValue}&&user=${user?.email}`)
                 .then(res => res.data)
                 .then(data => {
                     // console.log(data);
                     setAllDesigns(data);
+                    setAllDataLoading(false);
                 })
                 .catch(error => {
+                    setAllDataLoading(false);
                     toast.error(error.message);
                 })
         }
         if (user?.role === 'store') {
-            axiosSecure.get(`/viewAllDesigns?search=${filterValue}`)
+            setAllDataLoading(true);
+            axiosSecure.get(`/viewAllDesigns?search=${filterValue}&&user=${user?.email}`)
                 .then(res => res.data)
                 .then(data => {
                     setAllDesigns(data);
+                    setAllDataLoading(false);
                 })
         }
     }, [user, filterValue, reload])
@@ -172,7 +188,7 @@ const Dashboard = () => {
             })
             setAllDesigns([...temp2]);
 
-            axiosSecure.put(`/productReaction?id=${item._id}`, { likes: temp })
+            axiosSecure.put(`/productReaction?id=${item._id}&&user=${user?.email}`, { likes: temp })
                 .then(res => res.data)
                 .then(data => {
                     if (data.modifiedCount >= 1) {
@@ -193,7 +209,7 @@ const Dashboard = () => {
             // console.log(192,temp2);
             setAllDesigns([...temp2]);
             let temp = [...item.likes]
-            axiosSecure.put(`/productReaction?id=${item?._id}`, { likes: temp })
+            axiosSecure.put(`/productReaction?id=${item?._id}&&user=${user?.email}`, { likes: temp })
                 .then(res => res.data)
                 .then(data => {
                     if (data.modifiedCount >= 1) {
@@ -227,12 +243,12 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (decision) {
-            axiosSecure.put('/updateProduct', { buyerEmail: user?.email, isSold: true, _id: selectedItem?._id, remainingCoins: parseInt(user?.coins) - parseInt(selectedItem?.price)  })
+            axiosSecure.put(`/updateProduct?user=${user?.email}`, { buyerEmail: user?.email, isSold: true, _id: selectedItem?._id, remainingCoins: parseInt(user?.coins) - parseInt(selectedItem?.price) })
                 .then(res => res.data)
                 .then(data => {
                     if (data.modifiedCount >= 1) {
-                        let temp = {...user};
-                        temp.coins = parseInt(user?.coins)-parseInt(selectedItem?.price) 
+                        let temp = { ...user };
+                        temp.coins = parseInt(user?.coins) - parseInt(selectedItem?.price)
                         setUser(temp);
                         toast.success("Product purchased successfully");
                         setReload(!reload);
@@ -255,7 +271,7 @@ const Dashboard = () => {
             </div>
             <TagModal></TagModal>
             {
-                user?.role === 'admin' && <div className="row g-2">
+                dataLoading ? <DataSpinner></DataSpinner> : user?.role === 'admin' && <div className="row g-2">
                     <h2 className='mb-5'>Total User: {adminStatistics?.totalUsers}</h2>
                     {
                         adminDashboardFirstCards.map((item) => <div className="col-12 col-md-6 col-lg-3" key={item.id}>
@@ -276,8 +292,9 @@ const Dashboard = () => {
 
                 </div>
             }
+
             {
-                user?.role === 'admin' && <div className="row g-2">
+                dataLoading ? <DataSpinner></DataSpinner> : user?.role === 'admin' && <div className="row g-2">
                     <h2 className='my-3'>Total Designs: {adminStatistics?.totalDesigns}</h2>
                     {
                         adminDashboardSecondCards.map((item, index) => <div className="col-12 col-md-4 col-lg-3" key={item.id}>
@@ -298,30 +315,31 @@ const Dashboard = () => {
                 </div>
             }
             {
-                user?.role === "designer" && <div className='ms-5 mt-2 me-5'>
-                    <div className='d-flex justify-content-between'>
-                        <h2>Dashboard</h2>
-                        <h2>Total Designs: {designerStatistics?.total_design}</h2>
-                    </div>
-                    <div className="row g-2">
-                        {
-                            designerDashboardFirstCards.map(item => <div className="col-12 col-md-6 col-lg-4" key={item.id}>
-                                <div className="card" style={{ backgroundColor: item.cardBackColor, border: `1px solid ${item.cardBackColor}` }}>
-                                    <div className="card-body d-flex justify-content-center">
-                                        <div>
-                                            <div className='d-flex justify-content-center'><div className='border border-1' style={{ borderRadius: "50%", height: "45px", width: "45px", textAlign: "center", backgroundColor: item.iconBackColor }}><i className={`${item.icon} fs-3 ${item.id !== 3 ? "text-white" : "text-warning"}`}></i></div></div>
-                                            <div className='fs-4 text-center my-0' style={{ color: item.iconBackColor }}>{(item.id === 1 && `${designerStatistics?.total_approved}`) || (item.id === 2 && `${designerStatistics?.total_unapproved}`) || (item.id === 3 && `${designerStatistics?.total_rejected}`)}</div>
-                                            <div className='text-center my-0'>
-                                                <h5 className='my-0'>{item.name}</h5>
+                user?.role === "designer" ? dataLoading && <DataSpinner></DataSpinner> :
+                    user?.role === "designer" && <div className='ms-5 mt-2 me-5'>
+                        <div className='d-flex justify-content-between'>
+                            <h2>Dashboard</h2>
+                            <h2>Total Designs: {designerStatistics?.total_design}</h2>
+                        </div>
+                        <div className="row g-2">
+                            {
+                                designerDashboardFirstCards.map(item => <div className="col-12 col-md-6 col-lg-4" key={item.id}>
+                                    <div className="card" style={{ backgroundColor: item.cardBackColor, border: `1px solid ${item.cardBackColor}` }}>
+                                        <div className="card-body d-flex justify-content-center">
+                                            <div>
+                                                <div className='d-flex justify-content-center'><div className='border border-1' style={{ borderRadius: "50%", height: "45px", width: "45px", textAlign: "center", backgroundColor: item.iconBackColor }}><i className={`${item.icon} fs-3 ${item.id !== 3 ? "text-white" : "text-warning"}`}></i></div></div>
+                                                <div className='fs-4 text-center my-0' style={{ color: item.iconBackColor }}>{(item.id === 1 && `${designerStatistics?.total_approved}`) || (item.id === 2 && `${designerStatistics?.total_unapproved}`) || (item.id === 3 && `${designerStatistics?.total_rejected}`)}</div>
+                                                <div className='text-center my-0'>
+                                                    <h5 className='my-0'>{item.name}</h5>
+                                                </div>
                                             </div>
-                                        </div>
 
+                                        </div>
                                     </div>
-                                </div>
-                            </div>)
-                        }
+                                </div>)
+                            }
+                        </div>
                     </div>
-                </div>
             }
             {
                 (user?.role === "admin" || (user?.role === 'store' && user?.isPaid)) && <div className="row g-2 mt-4">
@@ -343,9 +361,9 @@ const Dashboard = () => {
                             </select>
                         </div>
                     </div>
-
+                    
                     {
-                        allDesigns.map((item, index) => <div className='col-12 col-sm-6 col-md-4 col-lg-3' key={index}>
+                        allDataLoading ? <DataSpinner></DataSpinner> : allDesigns.length === 0 ? <div className='d-flex justify-content-center align-items-center' style={{ border: "1px dashed gray", height: "200px", backgroundColor:"#DDDDDD", borderRadius:"10px",marginBottom:"10px"}}><h1 className='fw-bolder' style={{color:"whitesmoke"}}>No data found</h1></div> :allDesigns.map((item, index) => <div className='col-12 col-sm-6 col-md-4 col-lg-3' key={index}>
                             <div className="card" style={{ borderRadius: "10px", cursor: "pointer" }} >
                                 {
                                     item.isPremium && <div className='d-flex justify-content-end'>
@@ -366,9 +384,9 @@ const Dashboard = () => {
                                         </div>
                                     </div>
 
-                                    <div className='d-flex' onClick={() => handleNavigate(item)} style={{flexWrap:"wrap"}}>
+                                    <div className='d-flex' onClick={() => handleNavigate(item)} style={{ flexWrap: "wrap" }}>
                                         {
-                                            item.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB", fontSize:"10px" }}>{tagItem?.name || tagItem}</div>)
+                                            item.tags.map((tagItem, tagIndex) => <div key={tagIndex} className='ps-2 pe-2 pt-1 pb-1 border rounded-4 mx-2 mt-3' style={{ backgroundColor: "#EBEBEB", fontSize: "10px" }}>{tagItem?.name || tagItem}</div>)
                                         }
                                     </div>
                                     <div className='mt-2'>

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { toast } from "react-hot-toast";
 import ClockLoader from 'react-spinners/ClockLoader';
 import useAxiosSecure from '../../CustomHook/useAxiosSecure/useAxiosSecure';
+import { SharedData } from '../../SharedData/SharedContext';
 
 
 const AddUserForm = () => {
@@ -9,6 +10,7 @@ const AddUserForm = () => {
     const [dataLoading, setDataLoading] = useState(false);
     const [storeName, setStoreName] = useState(null);
     const [axiosSecure] = useAxiosSecure();
+    const { user } = useContext(SharedData);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -30,10 +32,10 @@ const AddUserForm = () => {
             return;
         }
         if (roleName === 'store') {
-            axiosSecure.post('/addUser', { first_name, last_name, username, email, password, state, country, phone_number, coins: 0, storeName, role: roleName, is_staff: true, is_active: true, isPaid: false })
+            axiosSecure.post(`/addUser?user=${user?.email}`, { first_name, last_name, username, email, password, state, country, phone_number, coins: 0, storeName, role: roleName, is_staff: true, is_active: true, isPaid: false })
                 .then(res => res.data)
                 .then(data => {
-                    if(data.message){
+                    if (data.message) {
                         toast.error(data.message);
                     }
                     if (data.acknowledged) {
@@ -45,7 +47,7 @@ const AddUserForm = () => {
                 })
         }
         else {
-            axiosSecure.post('/addUser', {
+            axiosSecure.post(`/addUser?user=${user?.email}`, {
                 first_name, last_name, username, email, password, state, country, phone_number, role: roleName, is_staff: true, is_active: true
             })
                 .then(res => res.data)
@@ -107,7 +109,7 @@ const AddUserForm = () => {
                                             <input type="text" className='form-control' name='state' placeholder='Enter your phone number' required />
                                         </div>
                                     </div>
-                                    
+
                                     <div>
                                         <label htmlFor="city">City:</label>
                                         <div>

@@ -105,7 +105,7 @@ export default function StickyHeadTable() {
 
     useEffect(() => {
         if (user?.role === 'admin') {
-            axiosSecure.get('/allDesigner')
+            axiosSecure.get(`/allDesigner?user=${user?.email}`)
                 .then(res => res.data)
                 .then(data => {
                     setUsers(data);

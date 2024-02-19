@@ -1,26 +1,28 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import useAxiosSecure from '../../CustomHook/useAxiosSecure/useAxiosSecure';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { SharedData } from '../../SharedData/SharedContext';
 
-const RejectModal = ({reload, setReload}) => {
-    const [axiosSecure]= useAxiosSecure();
-    const [searchParams, setSearchParams]= useSearchParams();
-    const navigate= useNavigate();
-    const handleReject= ()=>{   
-        axiosSecure.put(`/approveDesign?id=${searchParams.get('id')}`,{
+const RejectModal = ({ reload, setReload }) => {
+    const { user } = useContext(SharedData);
+    const [axiosSecure] = useAxiosSecure();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const handleReject = () => {
+        axiosSecure.put(`/approveDesign?id=${searchParams.get('id')}&&user=${user?.email}`, {
             isRejected: true
         })
-        .then(res=>res.data)
-        .then(data=>{
-            if(data.modifiedCount>=1){
-                setReload(!reload);
-                navigate(-1);
-            }
-        })
-        .catch(error=>{
-            toast.error(error.message);
-        })
+            .then(res => res.data)
+            .then(data => {
+                if (data.modifiedCount >= 1) {
+                    setReload(!reload);
+                    navigate(-1);
+                }
+            })
+            .catch(error => {
+                toast.error(error.message);
+            })
     }
     return (
         <div className='modal fade' id='#RejectModal' data-bs-backdrop="static" data-bs-keyboard="false">
@@ -33,7 +35,7 @@ const RejectModal = ({reload, setReload}) => {
                             <button className='btn btn-danger' data-bs-dismiss="modal"></button>
                         </div>
                     </div>
-                </div>  
+                </div>
             </div>
         </div>
     );

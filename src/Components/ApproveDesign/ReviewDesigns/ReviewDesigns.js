@@ -17,7 +17,7 @@ const ReviewDesigns = () => {
 
     useEffect(() => {
         if (user?.role === "admin") {
-            axiosSecure.post('/specificUnApprovedItems', {
+            axiosSecure.post(`/specificUnApprovedItems?user=${user?.email}`, {
                 email: searchParams.get("user")
             })
                 .then(res => res.data)

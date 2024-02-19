@@ -24,7 +24,7 @@ const DesignDetails = () => {
 
     useEffect(() => {
         if (user) {
-            axiosSecure.post('/specificDesignApproval', { id: searchParams.get("id") })
+            axiosSecure.post(`/specificDesignApproval?user=${user?.email}`, { id: searchParams.get("id") })
                 .then(res => res.data)
                 .then(data => {
                     if (!data) {
@@ -43,7 +43,7 @@ const DesignDetails = () => {
 
     useEffect(() => {
         if (designApprove) {
-            axiosSecure.put(`/approveDesign?id=${searchParams.get("id")}`, {
+            axiosSecure.put(`/approveDesign?id=${searchParams.get("id")}&&user=${user?.email}`, {
                 isApproved: true
             })
                 .then(res => res.data)

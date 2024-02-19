@@ -50,9 +50,14 @@ const Main = () => {
                             </>
                         }
                         {
-                           ( user?.role === "admin" || user?.role === "store") && <div className="mt-3">
-                                <NavLink to={'/Dashboard/availablePackage'} title='Packages' className={'side-link'}><i className='bi bi-boxes fs-5'></i></NavLink>
-                            </div>
+                           ( user?.role === "admin" || user?.role === "store") && <>
+                                <div className="mt-3">
+                                    <NavLink to={'/Dashboard/availablePackage'} title='Packages' className={'side-link'}><i className='bi bi-boxes fs-5'></i></NavLink>
+                                </div>
+                                <div className="mt-3">
+                                    <NavLink to={'/Dashboard/subscriptions'} title='Subscription' className={'side-link'}><i className='bi bi-subtract fs-5'></i></NavLink>
+                                </div>
+                           </> 
                         }
 
                     </div>

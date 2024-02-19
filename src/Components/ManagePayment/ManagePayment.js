@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect, useContext } from 'react'
 import { styled } from '@mui/material/styles'
 import {
     Paper,
@@ -19,6 +19,7 @@ import Spinner from '../Spinner/Spinner'
 import useAxiosSecure from '../CustomHook/useAxiosSecure/useAxiosSecure'
 import toast from 'react-hot-toast'
 import useTitle from '../CustomHook/useTitle/useTitle'
+import { SharedData } from '../SharedData/SharedContext'
 
 const listItemBtn = {
     justifyContent: 'initial',
@@ -74,12 +75,13 @@ const style = {
 
 export default function StickyHeadTable() {
     useTitle("Lookaura- Manage Payment");
+    const { user } = useContext(SharedData);
     const [transactions, setTransactions] = useState([])
     const [userId, setUserId] = useState()
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
     const [state, setState] = useState(false)
-    const [axiosSecure]= useAxiosSecure();
+    const [axiosSecure] = useAxiosSecure();
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
@@ -91,15 +93,15 @@ export default function StickyHeadTable() {
     }
 
     useEffect(() => {
-        axiosSecure.get('/allPayment')
-        .then(res=>res.data)
-        .then(data=>{
-            setTransactions(data);
-        })
-        .catch(error=>{
+        axiosSecure.get(`/allPayment?user=${user?.email}`)
+            .then(res => res.data)
+            .then(data => {
+                setTransactions(data);
+            })
+            .catch(error => {
 
-            toast.error(error.message);
-        })
+                toast.error(error.message);
+            })
     }, [])
 
     return (
@@ -144,9 +146,9 @@ export default function StickyHeadTable() {
                         </TableBody>
                     ) : (
                         <div className='d-flex justify-content-center align-items-center w-100' >
-                                <Spinner></Spinner>
+                            <Spinner></Spinner>
                         </div>
-                        
+
                     )}
                 </Table>
             </TableContainer>

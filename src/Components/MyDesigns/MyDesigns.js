@@ -16,7 +16,7 @@ const MyDesigns = () => {
 
     useEffect(() => {
         if (user?.role === 'designer') {
-            axiosSecure.get('/myDesigns')
+            axiosSecure.get(`/myDesigns?user=${user?.email}`)
                 .then(res => res.data)
                 .then(data => {
                     setAllDesigns(data);
@@ -36,7 +36,7 @@ const MyDesigns = () => {
             })
             setAllDesigns(temp2);
 
-            axiosSecure.put(`/productReaction?id=${item._id}`, { likes: temp })
+            axiosSecure.put(`/productReaction?id=${item._id}&&user=${user?.email}`, { likes: temp })
                 .then(res => res.data)
                 .then(data => {
                     if (data.modifiedCount >= 1) {
@@ -56,7 +56,7 @@ const MyDesigns = () => {
             })
             setAllDesigns(temp2);
             let temp = [...item.likes]
-            axiosSecure.put(`/productReaction?id=${item?._id}`, { likes: temp })
+            axiosSecure.put(`/productReaction?id=${item?._id}&&user=${user?.email}`, { likes: temp })
                 .then(res => res.data)
                 .then(data => {
                     if (data.modifiedCount >= 1) {

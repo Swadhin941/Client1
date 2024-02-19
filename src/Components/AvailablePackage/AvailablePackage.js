@@ -19,7 +19,7 @@ const AvailablePackage = () => {
     useEffect(() => {
         if (user !== false) {
             setDataLoading(true);
-            axiosSecure.get('/allPackage')
+            axiosSecure.get(`/allPackage?user=${user?.email}`)
                 .then(res => res.data)
                 .then(data => {
                     setAvailablePackage(data);
@@ -33,7 +33,7 @@ const AvailablePackage = () => {
     }, [user, reload])
 
     const handleOrder= (item)=>{
-        axiosSecure.post("/order",{
+        axiosSecure.post(`/order?user=${user?.email}`,{
             ...item
         })
         .then(res=>res.data)
@@ -51,7 +51,7 @@ const AvailablePackage = () => {
                     image:
                         'https://images.crunchbase.com/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/raml2xzpwgc9tpomgaxd',
                     handler: async function (response) {
-                        console.log(response)
+                        // console.log(response)
                         axiosSecure.post('/order/validate',{
                             order_id: response.razorpay_order_id,
                             signature: response.razorpay_signature,

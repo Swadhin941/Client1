@@ -20,6 +20,7 @@ import AdminRouter from './Components/PrivateRouter/AdminRouter';
 import DesignerRouter from './Components/PrivateRouter/DesignerRouter';
 import Carts from './Components/Carts/Carts';
 import Root from './Components/Layout/Root';
+import Subscription from './Components/Subscription/Subscription';
 
 function App() {
   const router = createBrowserRouter([
@@ -81,6 +82,10 @@ function App() {
         {
           path: "/Dashboard/carts",
           element: <PrivateRouter><Carts></Carts></PrivateRouter>
+        },
+        {
+          path: "/Dashboard/subscriptions",
+          element: <PrivateRouter><Subscription></Subscription></PrivateRouter>
         }
       ]
     },

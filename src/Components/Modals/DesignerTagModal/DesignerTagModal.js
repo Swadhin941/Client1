@@ -10,7 +10,7 @@ const DesignerTagModal = ({ tags, setTags }) => {
     const [allSelectedTag, setAllSelectedTag] = useState([])
 
     useEffect(() => {
-        axiosSecure.get("/allTag")
+        axiosSecure.get(`/allTag?user=${user?.email}`)
             .then(res => res.data)
             .then(data => {
                 if (user?.role === "designer") {

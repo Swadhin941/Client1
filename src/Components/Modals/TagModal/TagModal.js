@@ -14,7 +14,7 @@ const TagModal = () => {
     const [allSelectedTag, setAllSelectedTag] = useState([]);
 
     useEffect(() => {
-        axiosSecure.get("/allTag")
+        axiosSecure.get(`/allTag?user=${user?.email}`)
             .then(res => res.data)
             .then(data => {
                 setAllTag(data);

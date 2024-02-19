@@ -14,10 +14,10 @@ const ApproveRequest = () => {
 
     useEffect(() => {
         if (user) {
-            axiosSecure.get('/reviewDesigns')
+            axiosSecure.get(`/reviewDesigns?user=${user?.email}`)
             .then(res=>res.data)
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 let count=0;
                 data.forEach(element=>{
                     count+= element.total_unapproved

@@ -1,30 +1,31 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import useAxiosSecure from '../../CustomHook/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
+import { SharedData } from '../../SharedData/SharedContext';
 
-const EditUser = ({editUser, setEditUser, reload, setReload}) => {
-    console.log(editUser);
-    const [axiosSecure]= useAxiosSecure();
-    const handleSubmit = (e)=>{
+const EditUser = ({ editUser, setEditUser, reload, setReload }) => {
+    const { user } = useContext(SharedData);
+    const [axiosSecure] = useAxiosSecure();
+    const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
-        const first_name= form.firstName.value;
-        const last_name= form.lastName.value;
-        const phone_number= form.phoneNumber.value;
-        axiosSecure.put('/updateUser', {
-            first_name, last_name,phone_number, email: editUser?.email
+        const first_name = form.firstName.value;
+        const last_name = form.lastName.value;
+        const phone_number = form.phoneNumber.value;
+        axiosSecure.put(`/updateUser?user=${user?.email}`, {
+            first_name, last_name, phone_number, email: editUser?.email
         })
-        .then(res=>res.data)
-        .then(data=>{
-            if(data.modifiedCount>=1){
-                toast.success("User updated successfully");
-                setReload(!reload);
-                setEditUser(null);
-            }
-        })
-        .catch(error=>{
-            toast.error(error.message);
-        })
+            .then(res => res.data)
+            .then(data => {
+                if (data.modifiedCount >= 1) {
+                    toast.success("User updated successfully");
+                    setReload(!reload);
+                    setEditUser(null);
+                }
+            })
+            .catch(error => {
+                toast.error(error.message);
+            })
     }
     return (
         <div className='modal fade' id='EditUser' data-bs-backdrop="static" data-bs-keyboard="false">
@@ -58,7 +59,7 @@ const EditUser = ({editUser, setEditUser, reload, setReload}) => {
                             </div>
                             <div className='mt-2 d-flex justify-content-evenly'>
                                 <button type='submit' className='btn btn-success' data-bs-dismiss="modal">Save</button>
-                                <p className='btn btn-danger m-0' data-bs-dismiss="modal" onClick={()=>setEditUser(null)}>Cancel</p>
+                                <p className='btn btn-danger m-0' data-bs-dismiss="modal" onClick={() => setEditUser(null)}>Cancel</p>
                             </div>
                         </form>
                     </div>
