@@ -4,23 +4,28 @@ import useAxiosSecure from '../CustomHook/useAxiosSecure/useAxiosSecure';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import useTitle from '../CustomHook/useTitle/useTitle';
+import DataSpinner from '../DataSpinner/DataSpinner';
 
 const Carts = () => {
     useTitle("Lookaura- Carts");
     const [allDesigns, setAllDesigns] = useState([]);
     const { user } = useContext(SharedData);
+    const [dataLoading, setDataLoading]= useState(false);
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (user?.role === "store") {
+            setDataLoading(true);
             axiosSecure.get(`/allCart?user=${user?.email}`)
             .then(res=>res.data)
             .then(data=>{
-                console.log(data);
+                // console.log(data);
                 setAllDesigns(data);
+                setDataLoading(false);
             })
             .catch(error=>{
+                setDataLoading(false);
                 toast.error(error.message);
             })
         }
@@ -75,7 +80,7 @@ const Carts = () => {
     return (
         <div className={`container-fluid m-4${allDesigns.length === 0 && "d-flex justify-content-center align-items-center"}`} style={{ height: "100%" }}>
             {
-                allDesigns.length === 0 ? <div className='d-flex justify-content-center align-items-center bg-dark' style={{ height: "300px", width: "100%", borderRadius: "10px" }}>
+                dataLoading ? <DataSpinner></DataSpinner> : allDesigns.length === 0 ? <div className='d-flex justify-content-center align-items-center bg-dark' style={{ height: "300px", width: "100%", borderRadius: "10px" }}>
                     <h1 className='text-white'>No Designs</h1>
                 </div> : <div className='row'>
                     <h2 className='fw-bold mb-5'>My Designs</h2>

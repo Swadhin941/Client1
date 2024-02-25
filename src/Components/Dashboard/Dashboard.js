@@ -409,12 +409,12 @@ const Dashboard = () => {
             }
 
             {
-                user?.role === 'store' && !user?.isPaid && <>
+                user?.role === 'store' && !user?.subscription && <>
                     <div className='d-flex justify-content-center align-items-center mt-5' style={{ color: "white" }}>
-                        <h2 className='fw-bold text-primary'>Please complete your payment to access the designs.</h2>
+                        <h2 className='fw-bold text-primary'>Please buy your subscription to access the designs.</h2>
                     </div>
                     <div className='d-flex justify-content-center'>
-                        <button className='btn btn-primary' onClick={() => navigate('/Dashboard/availablePackage')}>Pay</button>
+                        <button className='btn btn-primary' onClick={() => navigate('/Dashboard/subscriptions')}>Buy subscription</button>
                     </div>
                 </>
 

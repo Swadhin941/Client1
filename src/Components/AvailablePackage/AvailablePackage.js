@@ -38,9 +38,9 @@ const AvailablePackage = () => {
         })
         .then(res=>res.data)
         .then(data=>{
-            // console.log(data);
+            // console.log(data)
             if(data){
-                console.log(data);
+                // console.log(data);
                 const options = {
                     key: 'rzp_test_HJtppEK315iHxh',
                     currency: data.currency,

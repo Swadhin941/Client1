@@ -3,17 +3,20 @@ import { SharedData } from '../../SharedData/SharedContext';
 import useAxiosSecure from '../../CustomHook/useAxiosSecure/useAxiosSecure';
 import ViewUser from '../../Modals/ViewUser/ViewUser';
 import { useNavigate } from 'react-router-dom';
+import DataSpinner from '../../DataSpinner/DataSpinner';
 
 const ApproveRequest = () => {
     const { user } = useContext(SharedData);
     const [approveDesign, setApproveDesign] = useState([]);
     const [totalApproveDesign, setTotalApproveDesign]= useState(0);
     const [designerDetails, setDesignerDetails] = useState(null);
+    const [dataLoading, setDataLoading]= useState(false);
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (user) {
+            setDataLoading(true);
             axiosSecure.get(`/reviewDesigns?user=${user?.email}`)
             .then(res=>res.data)
             .then(data=>{
@@ -24,13 +27,17 @@ const ApproveRequest = () => {
                 })
                 setTotalApproveDesign(count);
                 setApproveDesign(data);
+                setDataLoading(false);
+            })
+            .catch(error=>{
+                setDataLoading(false);
             })
         }
     }, [user])
     return (
         <div className='container-fluid'>
             {
-                approveDesign.length === 0 ? <div className='d-flex justify-content-center align-items-center' style={{height:"100vh"}}>
+                dataLoading ? <DataSpinner></DataSpinner> : approveDesign.length === 0 ? <div className='d-flex justify-content-center align-items-center' style={{height:"100vh"}}>
                     <div className='bg-dark p-5' style={{height:"350px", width:"100%", borderRadius:"10px"}}>
                         <h2 className='text-white fw-bold text-center'>Nothing to approve</h2>
                     </div>

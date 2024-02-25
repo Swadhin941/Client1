@@ -20,6 +20,7 @@ import useAxiosSecure from '../CustomHook/useAxiosSecure/useAxiosSecure'
 import toast from 'react-hot-toast'
 import useTitle from '../CustomHook/useTitle/useTitle'
 import { SharedData } from '../SharedData/SharedContext'
+import DataSpinner from '../DataSpinner/DataSpinner'
 
 const listItemBtn = {
     justifyContent: 'initial',
@@ -82,6 +83,7 @@ export default function StickyHeadTable() {
     const [rowsPerPage, setRowsPerPage] = useState(10)
     const [state, setState] = useState(false)
     const [axiosSecure] = useAxiosSecure();
+    const [dataLoading, setDataLoading]= useState(false);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
@@ -93,17 +95,22 @@ export default function StickyHeadTable() {
     }
 
     useEffect(() => {
+        setDataLoading(true);
         axiosSecure.get(`/allPayment?user=${user?.email}`)
             .then(res => res.data)
             .then(data => {
                 setTransactions(data);
+                setDataLoading(false);
             })
             .catch(error => {
-
+                setDataLoading(false);
                 toast.error(error.message);
             })
     }, [])
 
+    if(dataLoading){
+        return <DataSpinner></DataSpinner>
+    }
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden', marginTop: '1.5rem', }}>
             <TableContainer sx={{ maxHeight: 550 }}>

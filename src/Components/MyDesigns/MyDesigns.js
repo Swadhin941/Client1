@@ -5,6 +5,7 @@ import "../Dashboard/Dashboard.css";
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import useTitle from '../CustomHook/useTitle/useTitle';
+import DataSpinner from '../DataSpinner/DataSpinner';
 
 const MyDesigns = () => {
     useTitle("Lookaura- My design");
@@ -12,14 +13,21 @@ const MyDesigns = () => {
     const { user } = useContext(SharedData);
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
+    const [dataLoading, setDataLoading]= useState(false);
 
 
     useEffect(() => {
         if (user?.role === 'designer') {
+            setDataLoading(true);
             axiosSecure.get(`/myDesigns?user=${user?.email}`)
                 .then(res => res.data)
                 .then(data => {
                     setAllDesigns(data);
+                    setDataLoading(false);
+                })
+                .catch(error => {
+                    setDataLoading(false);
+                    toast.error(error.message);
                 })
         }
     }, [user])
@@ -63,6 +71,9 @@ const MyDesigns = () => {
 
                     }
                 })
+                .catch(error=>{
+                    toast.error(error.message);
+                })
         }
 
     }
@@ -70,7 +81,7 @@ const MyDesigns = () => {
     return (
         <div className={`container-fluid ${allDesigns.length === 0 && "d-flex justify-content-center align-items-center"}`} style={{ height: "100%" }}>
             {
-                allDesigns.length === 0 ? <div className='d-flex justify-content-center align-items-center bg-dark' style={{ height: "300px", width: "100%", borderRadius: "10px" }}>
+                dataLoading? <DataSpinner></DataSpinner> : allDesigns.length === 0 ? <div className='d-flex justify-content-center align-items-center bg-dark' style={{ height: "300px", width: "100%", borderRadius: "10px" }}>
                     <h1 className='text-white'>No Designs</h1>
                 </div> : <div className='row'>
                     <h2 className='fw-bold mb-5'>My Designs</h2>
