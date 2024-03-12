@@ -53,9 +53,6 @@ const ProfileModal = () => {
 
     const handlePictureSave= async()=>{
         setPhotoLoading(true);
-        // const formData = new FormData();
-        // formData.append("image", tempPicture)
-        // console.log(formData);
         const params = {
             Bucket: process.env.REACT_APP_BUCKET,
             Key: tempPicture?.name,
@@ -84,6 +81,7 @@ const ProfileModal = () => {
             }
         }
         catch(error){
+            console.log(error.message);
             toast.error(error.message);
             setPhotoLoading(false);
         }
