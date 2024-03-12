@@ -42,7 +42,7 @@ const SharedContext = ({ children }) => {
             });
             const data = await response.json();
                 if (data.user) {
-                    console.log(data.user);
+                    // console.log(data.user);
                     setUser(data.user);
                 }
                 else {
