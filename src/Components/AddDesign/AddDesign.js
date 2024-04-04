@@ -46,8 +46,8 @@ const AddDesign = () => {
         setChecked(!checked);
     };
 
-    const handleSubmit = async () => {
-
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (tags.length === 0) {
             toast.error("Please enter some tags");
             return;
@@ -117,7 +117,7 @@ const AddDesign = () => {
             <div className="card border border-0" style={{ width: "500px" }}>
                 <div className="card-body">
                     <h3 className="ms-lg-5">Upload New Design</h3>
-                    <form className='form'>
+                    <form className='form' onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="exampleInputEmail1">Title:</label>
                             <input
@@ -138,7 +138,7 @@ const AddDesign = () => {
                         </div>
                         <div className="form-group mt-1">
                             {
-                                tags.length === 0 ? <button className='btn btn-primary w-100' data-bs-target="#DesignerTagModal" data-bs-toggle="modal">Add tags</button> :
+                                tags.length === 0 ? <p className='btn btn-primary w-100' data-bs-target="#DesignerTagModal" data-bs-toggle="modal">Add tags</p> :
                                     <div className='d-flex'>
                                         <div className='w-100' style={{ overflow: "auto", overflowX: "hidden", overflowY: "auto", height: "50px", borderBottom: "2px solid black" }}>
                                             <div className='d-flex' style={{ flexWrap: "wrap" }}>
@@ -148,7 +148,7 @@ const AddDesign = () => {
                                             </div>
                                         </div>
                                         <div>
-                                            <button className='btn btn-primary' style={{ width: "100px" }} data-bs-target="#DesignerTagModal" data-bs-toggle="modal">Edit tag</button>
+                                            <p className='btn btn-primary' style={{ width: "100px" }} data-bs-target="#DesignerTagModal" data-bs-toggle="modal">Edit tag</p>
                                         </div>
 
                                     </div>
@@ -193,7 +193,7 @@ const AddDesign = () => {
                                 Premium
                             </label>
                         </div>
-                        <button className='btn btn-dark w-100 mt-3 d-flex justify-content-center' onClick={() => handleSubmit()}>{dataLoading ? <ClockLoader size={24} color='white' /> : "Submit"}</button>
+                        <button className='btn btn-dark w-100 mt-3 d-flex justify-content-center'>{dataLoading ? <ClockLoader size={24} color='white' /> : "Submit"}</button>
                     </form>
                 </div>
             </div>

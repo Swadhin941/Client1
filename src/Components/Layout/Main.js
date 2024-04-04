@@ -71,7 +71,7 @@ const Main = () => {
                         <div className='mx-2'>
                             <span className='text-success fs-3 fw-bold'>{user?.coins}</span>
                         </div>
-                        <div className='mx-2' style={{ height: "40px", width: "40px" }} data-bs-target="#ProfileModal" data-bs-toggle="modal">
+                        <div className='mx-2' style={{ height: "40px", width: "40px", cursor:"pointer" }} data-bs-target="#ProfileModal" data-bs-toggle="modal">
                             <img src={user?.photoURL ? user?.photoURL : "https://i.ibb.co/bmVqbdY/empty-person.jpg"} alt="" height={'40px'} width={'40px'} style={{ borderRadius: "50%" }} />
                         </div>
                         <div className='me-4'>

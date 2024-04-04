@@ -97,6 +97,21 @@ const AvailablePackage = () => {
         })
     }
 
+    const handleDeletePackage= (id)=>{
+        axiosSecure.delete(`/deletePackage?deleteId=${id}`)
+        .then(res=>res.data)
+        .then(data=>{
+            if(data.deletedCount>=1){
+                let temp = [...availablePackage];
+                temp = temp.filter(filterId=> filterId._id !== id);
+                setAvailablePackage([...temp]);
+            }
+        })
+        .catch(error=>{
+            toast.error(error.message);
+        })
+    }
+
     if(dataLoading){
         return <Spinner></Spinner>
     }
@@ -107,6 +122,11 @@ const AvailablePackage = () => {
                 {
                     availablePackage.length!==0 && availablePackage.map(item=><div className='col-12 col-sm-6 col-md-4 col-lg-3' key={item?._id}>
                         <div className="card" style={{height:"300px"}}>
+                            {
+                                user?.role==="admin" && <div className='card-header d-flex justify-content-end bg-white' style={{borderBottom:"0px"}}>
+                                    <button className='btn btn-close' onClick={()=>handleDeletePackage(item._id)} style={{cursor:"pointer"}}></button>
+                                </div>
+                            }
                             <div className="card-body" style={{borderBottom:"0px"}}>
                                 <h2 className='text-center text-muted my-0'>{item?.coins} </h2>
                                 <p className='my-0 text-center'>Coins</p>

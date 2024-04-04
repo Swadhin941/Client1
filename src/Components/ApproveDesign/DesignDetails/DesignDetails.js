@@ -125,12 +125,12 @@ const DesignDetails = () => {
                                 </Typography>
                                 <Box textAlign="center">
                                     {
-                                        (user?.role === "store" && user?.email !== designDetails?.buyerEmail) && designDetails?.isPremium && parseInt(designDetails?.price) <= parseInt(user?.coins) ? <button className='btn btn-warning' onClick={() => setSelectedItem(designDetails)}>Buy now</button> : user?.email !== designDetails?.buyerEmail && <button className='btn btn-warning' onClick={() => navigate('/Dashboard/availablePackage')}>Buy now</button>
+                                        designDetails?.isApproved && (user?.role === "store" && user?.email !== designDetails?.buyerEmail) && designDetails?.isPremium && parseInt(designDetails?.price) <= parseInt(user?.coins) ? <button className='btn btn-warning' onClick={() => setSelectedItem(designDetails)}>Buy now</button> : user?.email !== designDetails?.buyerEmail && designDetails?.isApproved && <button className='btn btn-warning' onClick={() => navigate('/Dashboard/availablePackage')}>Buy now</button>
                                     }
                                     {
-                                        (user?.role === "admin" || (user?.role === "designer" && user?.email === designDetails?.uploaderEmail) || (user?.role === "store" && user?.email === designDetails?.buyerEmail)) ? <button className='btn btn-dark'>
+                                        (user?.role === "admin" || (user?.role === "designer" && user?.email === designDetails?.uploaderEmail) || (user?.role === "store" && user?.email === designDetails?.buyerEmail)) ? <button className='btn btn-dark mx-2'>
                                             <a href={designDetails?.assets} download style={{ textDecoration: "none", color: "white" }}>Download</a>
-                                        </button> : !designDetails?.isPremium && <button className='btn btn-dark'>
+                                        </button> : !designDetails?.isPremium && <button className='btn btn-dark mx-2'>
                                             <a href={designDetails?.assets} download style={{ textDecoration: "none", color: "white" }}>Download</a>
                                         </button>
                                     }

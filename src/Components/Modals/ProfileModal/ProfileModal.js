@@ -81,7 +81,7 @@ const ProfileModal = () => {
             }
         }
         catch(error){
-            console.log(error.message);
+            // console.log(error.message);
             toast.error(error.message);
             setPhotoLoading(false);
         }
@@ -122,7 +122,7 @@ const ProfileModal = () => {
                             <p>Country: {user?.country}</p>
                         </div>
                         <div className='mt-2 d-flex'>
-                            <p>Password: {passwordLoading? <ClockLoader size={20} color='black' />: user?.password}</p><span className='ms-2' onClick={() => setShowPasswordInputs(!showPasswordInputs)}><i className='bi bi-box-arrow-down-left'></i></span>
+                            <p>Change Password {passwordLoading? <ClockLoader size={20} color='black' />: ''}</p><span className='ms-2' onClick={() => setShowPasswordInputs(!showPasswordInputs)}><i className='bi bi-box-arrow-down-left'></i></span>
                         </div>
                         {
                             showPasswordInputs && <div className='mt-2'>

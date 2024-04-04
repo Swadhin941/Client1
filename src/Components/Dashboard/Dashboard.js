@@ -45,6 +45,7 @@ const Dashboard = () => {
                 .then(res => res.data)
                 .then(data => {
                     setDataLoading(false);
+                    // console.log(data);
                     setDesignerStatistics(data);
                 })
                 .catch(error => {
@@ -53,7 +54,7 @@ const Dashboard = () => {
         }
 
     }, [user])
-
+    // console.log(user);
     useEffect(() => {
         // console.log(filterValue);
         if (user?.role === "admin") {
@@ -260,6 +261,7 @@ const Dashboard = () => {
             setSelectedItem(null);
         }
     }, [decision])
+    // console.log(dataLoading);
 
     return (
         <div className='container-fluid'>
@@ -315,15 +317,15 @@ const Dashboard = () => {
                 </div>
             }
             {
-                user?.role === "designer" ? dataLoading && <DataSpinner></DataSpinner> :
-                    user?.role === "designer" && <div className='ms-5 mt-2 me-5'>
+                user?.role === "designer" && 
+                    <div className='ms-5 mt-2 me-5'>
                         <div className='d-flex justify-content-between'>
                             <h2>Dashboard</h2>
                             <h2>Total Designs: {designerStatistics?.total_design}</h2>
                         </div>
                         <div className="row g-2">
                             {
-                                designerDashboardFirstCards.map(item => <div className="col-12 col-md-6 col-lg-4" key={item.id}>
+                                designerDashboardFirstCards.map((item, index) => <div className="col-12 col-md-6 col-lg-4" key={index}>
                                     <div className="card" style={{ backgroundColor: item.cardBackColor, border: `1px solid ${item.cardBackColor}` }}>
                                         <div className="card-body d-flex justify-content-center">
                                             <div>
